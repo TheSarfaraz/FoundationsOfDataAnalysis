@@ -1,0 +1,804 @@
+---
+title: "Week4"
+author: "Sarfaraz Ahmed"
+date: "July 12, 2017"
+output: html_document
+---
+
+# Lab 4: Austin City Limits
+
+![](https://d37djvu3ytnwxt.cloudfront.net/assets/courseware/v1/19b74cbd25c0272359eb5f8eb3687ca9/asset-v1:UTAustinX+UT.7.11x+2T2017+type@asset+block/music.jpg)
+
+Known as the “Live Music Capital of the World,” Austin, Texas is also home to the longest-running music series in American television history, Austin City Limits.  This dataset includes data on a sample of musicians that performed live on the PBS television series Austin City Limits over the last 10 years.  Data on each artist include measures of commercial popularity, such as the number of social media followers on Twitter or Facebook, and their success in winning a Grammy Music Award. 
+
+Primary Research Question
+
+For artists age 30 or older, do female artists play different kinds of music on Austin City Limits than male artists?
+
+problem
+3 points possible (graded)
+Check the Data
+
+Let's begin by examining our data in R.
+
+1. Open RStudio. Make sure you've installed the current version of the SDSFoundations package.
+2. Type library(SDSFoundations) This will automatically load the data for the labs. 
+3.Type `acl <- AustinCityLimits` This will assign the data to your Workspace.
+4. Look at the spreadsheet view of the data to answer the following questions.
+
+Alternatively, you can use follow the steps in the "Importing a Data Frame" R tutorial video, and use the AustinCityLimits.csv file. (Right-click and "Save As.") Make sure to name the dataframe "acl" when importing.
+
+1. Open RStudio.
+2. Click on "Import Dataset" button at the top of the workspace window. Choose "from text file."
+3. Click on the location of the AustinCityLimits.csv file you just downloaded.
+4. Click on the AustinCityLimits.csv file. Then, click Upload.
+5. Look at the spreadsheet view of the data to answer the following questions.
+```{r}
+library(SDSFoundations)
+acl <- AustinCityLimits
+nrow(acl)
+table(acl[0:10,]$Grammy)
+```
+
+1a. How many artists are in this dataset?
+
+
+116
+correct
+116 
+1b. How many of the first 10 artists in the dataset were Grammy winners?
+
+
+4
+correct
+4 
+1c) What genre was played by the first female artist in the dataset who was over 60 years of age? Match the case of the genre as it appears in the dataset.
+
+
+Jazz/Blues
+correct
+
+problem
+4/4 points (graded)
+Check the Variables of Interest
+
+Let's find the variables we need to answer the question.
+
+2a. Which variable tells us the kind of music played by each artist? The variable name in the dataset is:
+
+correct
+2b. What type of variable is this?
+
+correct
+2c. Which variable tells us whether the lead singer or performer is male or not?
+
+correct
+2d. What type of variable is this?
+
+correct
+
+problem
+2/2 points (graded)
+Reflect on the Method
+
+Which method should we be using for this analysis and why?
+
+
+3. We will generate a contingency table of genre and gender to help us with this analysis. Why?
+
+
+The table will show us how many male and female artists played each type of music. correct
+The table will show us the theoretical probability of each type of music appearing on ACL Live.
+The table will help us identify which cases should be deleted.
+4. We will compare marginal and conditional probabilities to determine if female and male artists tend to play different kinds of music. Why?
+
+
+We want to determine whether female artists prefer jazz.
+We want to describe the distribution of a single categorical variable.
+We want to determine if two categorical variables are independent or not. correct
+
+
+Prepare for the Analysis
+
+Primary Research Question
+
+For artists age 30 or older, do female artists play different kinds of music on Austin City Limits than male artists?
+
+Breakdown Your Analysis
+
+Let's break this analysis into its required steps:
+
+1. Create a subset of the data for artists age 30 or older.
+2. Create a table to show the marginal distribution for each variable.  
+3. Create a contingency table to show the conditional distribution for gender and genre.  
+4. Make a bar chart to better visualize how many male and female artists played in each genre.
+5. Calculate P(A):  the probability of each type of music (genre) being played.
+6. Calculate P(A|B):  the probability of each genre, given the artist’s gender.
+7. Interpret what these probabilities tell us about the relationship between genre and gender. 
+
+Here is the code you will use:
+```{r}
+#Subset the data for artists age 30 or older
+older <-acl[acl$Age>=30,]
+
+# Create tables of marginal distributions
+genre <- table(older$Genre)
+genre
+gender <- table(older$Gender)
+gender
+
+# Create contingency table 
+twoway <- table(older$Gender,older$Genre)
+twoway
+
+# Visualize the counts
+barplot(twoway, legend=T, beside=T)
+
+# Calculate P(A): the probability of each genre being played
+prop.table(genre)
+
+# Calculate P(A|B): the probability of each genre being played, given the artist’s gender
+prop.table(twoway,1)
+```
+
+problem
+1/1 point (graded)
+1) How many columns will be present in the table generated by the following line of code?
+gender <- table(acl$Gender)
+
+
+3
+2 correct
+1
+4
+
+problem
+1/1 point (graded)
+2) This code produces a bar chart with both a legend and side-by-side bars for each gender:
+barplot(twoway, legend=TRUE, beside=TRUE)
+
+What would the code look like if we wanted to keep the legend but stack the bars (instead of set them side-by-side)?
+
+
+barplot(twoway, beside=TRUE)
+barplot(twoway)
+barplot(twoway, legend=TRUE) correct
+
+
+problem
+1/1 point (graded)
+3) This line of code will produce four values, one for each genre of music:
+prop.table(genre)
+
+What value should you get if you sum the four values together?
+
+
+0.25
+1.00 correct
+0.50
+4.00
+
+problem
+1/1 point (graded)
+4) What does the value "1" refer to in this line of code:
+prop.table(twoway,1)
+
+Hint: Go back and look at the comment line.
+
+
+The number 1 references the first variable (gender) listed in the contingency table code. correct
+The number 1 refers to the first kind of question we typically ask of a contingency table.
+The number 1 refers to the fact that we typically code gender as (0,1) for (male,female).
+
+problem
+1/1 point (graded)
+5) Suppose we ran the following code to find conditional probabilities. What error has caused the prop.table function to not work? (You may want to examine the dataset in R for help.)
+
+acl <- AustinCityLimits
+View(acl)
+gender_grammy <- table(acl$Gender, acl$Grammy)
+prop.table(acl$Gender, acl$Grammy, 1)
+
+Error in prop.table(acl$Gender, acl$Grammy, 1) : unused argument (1)
+
+
+The prop.table function needs a table as an argument. correct
+There is no "Gender" variable in our dataset.
+The "Grammy" variable in our dataset is not capitalized.
+We have used two quantitative variables instead of categorical variables.
+
+
+
+Primary Research Question
+
+For artists age 30 or older, do female artists play different kinds of music on Austin City Limits than male artists?
+
+Conduct the Analysis in R
+
+1. Type or copy the script from the Prepare for the Analysis section into the Script window of R.
+2. Select the portion of the code you wish to run, then press "ctrl+ enter." 
+3. Output can be found in the Console window.
+
+```{r}
+#Subset the data for artists age 30 or older
+older <-acl[acl$Age>=30,]
+
+# Create tables of marginal distributions
+genre <- table(older$Genre)
+genre
+gender <- table(older$Gender)
+gender
+
+# Create contingency table 
+twoway <- table(older$Gender,older$Genre)
+twoway
+
+# Visualize the counts
+barplot(twoway, legend=T, beside=T)
+
+# Calculate P(A): the probability of each genre being played
+prop.table(genre)
+
+# Calculate P(A|B): the probability of each genre being played, given the artist’s gender
+prop.table(twoway,1)
+```
+
+problem
+6/6 points (graded)
+1a. How many male artists are in the 30+ year old artist subset of the Austin City Limits dataset?
+
+
+77
+correct
+77 
+1b. How many female artists are in the 30+ year old artist subset of the Austin City Limits dataset?
+
+
+25
+correct
+25 
+2a. To determine the proportion of jazz performers that were male, you would divide ________ by ________. (Enter responses in the order listed in the quesiton.)
+
+
+7
+correct
+7 
+
+11
+correct
+11 
+2b. To determine the proportion of males that performed jazz, you would divide ________ by ________. (Enter responses in the order listed in the quesiton.)
+
+
+7
+correct
+7 
+
+77
+correct
+77 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (6/6 points) Review
+problem
+2/2 points (graded)
+3a. Which table should you look at to determine how many artists performed rock/folk/indie music: genre or gender?
+
+
+genre
+correct
+3b. How many artists performed rock/folk/indie music?
+
+
+61
+correct
+61 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (2/2 points) Review
+problem
+2/2 points (graded)
+4a. Which of these lines of code provides the probability that a randomly selected artist from the dataset performed rock/folk/indie music?
+
+correct
+4b. What is the probability that a randomly selected artist from the dataset performed rock/folk/indie music?
+
+correct
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (2/2 points) Review
+problem
+2/2 points (graded)
+5a. Which of these lines of code provides the probability that a randomly selected female artist performed rock/folk/indie music?
+
+correct
+5b. What is the probability that a randomly selected female artist performed rock/folk/indie music?
+
+correct
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (2/2 points) Review
+
+
+problem
+1/1 point (graded)
+6. For genre and gender to be independent, which of the following statements must be true?
+
+
+P(rock)*P(female) = P(rock) + P(female)
+P(rock) = P(rock|female) correct
+P(female) = P(rock)/P(female)
+P(rock)=P(female/rock)
+
+Primary Research Question
+
+For artists age 30 or older, do female artists play different kinds of music on Austin City Limits than male artists?
+
+problem
+6/6 points (graded)
+Write Your Conclusions
+
+Answer the question and support your answer with statistics:
+
+The music played on Austin City Limits was grouped into four genres, including Country, Jazz, Rock and Singer-Songwriter. We wanted to examine only those artists who were age 30 or older. correctRock was the most frequently played genre, performed by  correct59.8 % of the Austin City Limits artists. Among female artists, however, only correct32.0 % of the artists played Rock music. This difference between the marginal and correctconditional probabilities suggests that gender and genre
+correctare not
+independent. This difference was also evident in the bar plots, where it was evident that females were more likely to perform in the correctSinger-Songwriter category than their male counterparts.
+
+
+
+Lab
+
+problem
+2/2 points (graded)
+Review of Conditional and Marginal Probability
+
+1a. The probability that an event will occur, given that a different event has also occurred, is known as:
+
+
+a conditional probability correct
+a marginal probability
+a mutually exclusive event
+the complement of the event
+1b. Which of the following must be true for two events, A and B, to be considered independent?
+
+
+P(A)*P(B)=P(A)
+P(A|B)=P(A)+P(B)
+P(A)=P(B)
+P(A)=P(A|B) correct
+
+
+problem
+1/1 point (graded)
+Lab Preparation
+
+In this lab you will be working with data from Austin City Limits.
+
+1. Open RStudio. Make sure you've installed the current version of the SDSFoundations package.
+2. Type library(SDSFoundations) This will automatically load the data for the labs. 
+3.Type acl <- AustinCityLimits This will assign the data to your Workspace.
+
+Alternatively, you can use follow the steps in the "Importing a Data Frame" R tutorial video, and use the AustinCityLimits.csv file. (Right-click and "Save As.") Make sure to name the dataframe "acl" when importing.
+
+1. Open RStudio.
+2. Click on "Import Dataset" button at the top of the workspace window. Choose "from text file."
+3. Click on the location of the AustinCityLimits.csv file you just downloaded.
+4. Click on the AustinCityLimits.csv file. Then, click Upload.
+
+Feel free to use the script from the week's PreLab, which you can modify for use in this Lab.
+
+2. One of the following questions will be answered in this lab by comparing marginal and conditional probabilities. Select the question that should be answered using this method:
+
+
+Is there a relationship between the number of Twitter followers and the number of Facebook friends?
+Do male and female artists have different numbers of Twitter followers?
+Among male artists, is there an association between winning a Grammy award and the genre of music that you play? correct
+How many Grammy winners have appeared on Austin City Limits?
+
+
+Primary Research Question
+
+Among male artists, is there an association between winning a Grammy and the genre of music that he plays?
+
+Analysis
+
+Let’s break this question down into the different descriptive statistics that you will need to construct your answer.  Be sure that your R output includes all of the following components. 
+
+1. Subset the data (males only).
+2. Create a table to show the marginal distributions for Genre and Grammy.
+3. Create a contingency table to show the conditional distribution for Genre and Grammy.
+4. Make a bar chart to better visualize how many artists in each Genre received a Grammy.
+5. Calculate P(A):  the probability of winning a Grammy.
+6. Calculate P(A|B): the probability of winning Grammy, given the artist's Genre.
+7. Interpret what these probabilities tell us about the relationship between Genre and winning a Grammy.
+```{r}
+# Subset the males data
+acl_males <- acl[acl$Gender == "M",]
+
+# Table to show marginal distributions of Genre and Grammy
+table(acl_males$Grammy)
+table(acl_males$Genre)
+
+# Table to show conditional distributions of Genre and Grammy
+acl_dist <- table(acl_males$Grammy, acl_males$Genre)
+acl_dist
+
+# Bar Chart
+barplot(acl_dist)
+
+# Calculate propability of winning a Grammy
+# Calculate probability of winnning a Grammy given the artist's Genre
+prop.table(table(acl_males$Grammy))
+acl_prop <- prop.table(acl_dist, 2)
+barplot(acl_prop <- prop.table(acl_dist, 2))
+acl_prop
+```
+
+problem
+8/8 points (graded)
+Contingency Table
+
+Note: All of the questions below deal with the data frame that contains males only.
+
+1) How many male artists won a Grammy?
+
+
+35
+correct
+35 
+2) How many male artists did not win a Grammy?
+
+
+46
+correct
+46 
+3) Which genre had the greatest number of Grammy wins?
+
+correct
+
+
+4) What is the probability that a randomly selected artist was a Grammy winner? (Report as a proportion rounded to three decimal places)
+
+
+0.432
+correct
+  Loading
+5) To determine the probability of winning a Grammy if the artist was a singer-songwriter, you would divide _______ by ________. (Enter numerical values.)
+
+
+2
+correct
+2 
+
+7
+correct
+7 
+6) To determine the probability that a randomly-selected Grammy winner was a singer-songwriter, you would divide ________ by ________. (Enter numerical values.)
+
+
+2
+correct
+2 
+
+35
+correct
+35 
+
+
+problem
+1/5 points (graded)
+Conditional Probabilities
+
+What is the probability that a randomly selected male artist from each of the following genres won a Grammy? (Report as proportions rounded to three decimal places.)
+
+7a. Country?
+
+
+0.086
+incorrect.636
+0.086 
+7b. Jazz?
+
+
+0.049
+incorrect.571
+0.049 
+7c. Rock/folk/indie?
+
+
+0.272
+incorrect.393
+0.272 
+7d. Singer-songwriter?
+
+
+0.0247
+incorrect.286
+0.0247 
+7e. Our conclusion should be that winning a Grammy _______ independent of Genre.
+
+correctis not
+
+Primary Research Question
+
+ Among male artists, is there an association between winning a Grammy and the genre of music that he plays?
+
+problem
+7/7 points (graded)
+Write Your Conclusion
+
+There  correctis an association between winning a Grammy and the Genre of music an artist plays. The probability of winning a Grammy, regardless of Genre, is  correct43.21 %. However, examination of a  correctcontingency table containing both Grammy and Genre showed that the  correctconditional probability of winning a Grammy changes by genre. If an artist is in the Country Genre, the conditional probability of winning a Grammy is  correct63.64 %, while if an artist is in the correctSinger-Songwriter Genre, the conditional probability of winning a Grammy is 28.6%. Visual examination of the barplot shows the conditional probabilities of winning a Grammy are  correctnot equal across Genres.
+
+
+Problem Set
+
+Question 1
+
+You want to see if an artist's popularity on Facebook (whether or not they have 100,000 or more likes) has anything to do with their age.
+
+1.  Generate a table to show the number of artists that are "popular" and those that are not.
+
+2.  Generate a table to show the number of "popular" artists within each age group.
+
+Use the "AustinCityLimits.csv" dataset to answer the following questions.  Instructions for installing "AustinCityLimits.csv" can be found under the Examine the Data unit in this week's Pre-Lab section.
+```{r}
+
+acl_Popular <- acl[acl$Facebook.100k == 1, ]
+acl_Popular
+
+# Which age group has highest number of popular artists
+table(acl_Popular$Age.Group)
+
+prop.table(table(acl$Facebook.100k, acl$Age.Group), 2)
+```
+
+problem
+1/1 point (graded)
+1a. How many artists in the dataset have 100,000 or more likes on Facebook?
+
+
+85
+correct
+85 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+1b. Which age group has the highest number of artists that have 100,000 or more likes on Facebook? (Spell out your answer, i.e. twenties, thirties, forties, etc.)
+
+
+Thirties
+correct
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+4/4 points (graded)
+1c. For each age group, fill in the proportion of artists who have 100,000 or more likes on Facebook. (Use the appropriate function in R to calculate these, and round to 3 decimal places (i.e. 0.123.)
+
+Twenties = ____
+
+
+0.786
+correct
+0.786 
+Thirties = ____
+
+
+0.775
+correct
+0.775 
+Forties = ____
+
+
+0.800
+correct
+0.800 
+Fifties or older = ____
+
+
+0.594
+correct
+0.594 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Question 2
+
+A high school counselor wants to categorize students according to two variables: their gender (male or female) and their grade level (freshman, sophomore, junior or senior).
+
+problem
+1/1 point (graded)
+2a. To how many possible outcomes can students be assigned?
+
+
+8
+correct
+8 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+An Economics professor kept a record of grades earned by the college students in his class, as shown below. (In the US, an "A" is the strongest grade and an "F" is the Weakest.)
+
+A	B	C	D	F
+Freshman	5	10	9	10	6
+Sophomore	8	10	9	7	4
+Junior	11	5	4	4	2
+Senior	9	9	4	2	0
+Notice that the marginal totals have not been filled in.
+
+All numerical input answers below should be reported as proportions.
+
+problem
+1/1 point (graded)
+2b. What proportion of students in the class received a grade of A? (Round to 2 decimal places.)
+
+
+0.26
+correct
+0.26 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+2c. What proportion of the students were upperclassmen (juniors and seniors)? (Round to 2 decimal places.)
+
+
+0.39
+correct
+0.39 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+0/1 point (graded)
+2d. What is the probability that a freshman received a failing grade of F? (Round to 2 decimal places.)
+
+
+0.05
+incorrect.15
+0.05 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Answers are displayed within the problem Review
+problem
+1/1 point (graded)
+2e. What is the probability that a randomly selected student from the class would be a sophomore that received a grade of B? (Round to 2 decimal places.)
+
+
+0.08
+correct
+0.08 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+0/1 point (graded)
+2f. What proportion of juniors passed the course with a grade of D or better? (Round to 2 decimal places.)
+
+
+0.23
+incorrect0.92
+0.23 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Answers are displayed within the problem Review
+problem
+1/1 point (graded)
+2g. What is the probability that a randomly selected student from this class would be a senior? (Report to 2 decimal places.)
+
+
+0.19
+correct
+0.19 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+2h. If a student received a grade of D in the class, what is the probability that the student was a senior? (Round to 2 decimal places.)
+
+
+0.09
+correct
+0.09 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+2i. Does the probability that a randomly selected student is a senior change if we know that the student received a grade of D in the course?
+
+
+Yes correct
+No
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Question 3
+
+Use the below probability statements to answer the following two questions. Report answers as proportions.
+
+P(A) = 0.35
+
+P(A and B) = 0.15
+
+
+
+problem
+0/1 point (graded)
+3a. If A and B are independent, what is the value of P(A|B)? (Round to 2 decimal places.)
+
+
+0.43
+incorrect0.35
+0.43 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Answers are displayed within the problem Review
+problem
+1/1 point (graded)
+3b. What is the probability of P(B|A)? (Round to 2 decimal places.)
+
+
+0.43
+correct
+0.43 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Question 4
+
+A movie theater conducted a survey to determine the movie preferences of men and women. They asked a total of 130 adults (50 women and 80 men) to choose their favorite movie genre out of four choices: Action, Comedy, Horror, or Romance. The results of their survey are shown below.
+
+Women	Men
+Action	12%	35%
+Comedy	34%	25%
+Horror	30%	32.50%
+Romance	24%	7.50%
+problem
+1/1 point (graded)
+4a. Based on the above information, do Gender and Movie preferences appear to be independent?
+
+
+Yes
+No correct
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+4b. What is the probability that a randomly chosen person from the survey prefers Action films? (Report as a proportion rounded to 2 decimal places.)
+
+
+0.26
+correct
+0.26 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+4c. What is P(Action|Women)? (Report as a proportion rounded to 2 decimal places.)
+
+
+0.12
+correct
+0.12 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.

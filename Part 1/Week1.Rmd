@@ -1,0 +1,281 @@
+---
+title: "Week1"
+author: "Sarfaraz Ahmed"
+date: "June 22, 2017"
+output: html_document
+---
+
+## Lab 1: Cycling in Austin
+
+![](https://d37djvu3ytnwxt.cloudfront.net/assets/courseware/v1/92f8defb29778209ffbeccc4d996d27e/asset-v1:UTAustinX+UT.7.11x+2T2017+type@asset+block/cycling.jpg)
+In 2011, researchers at the Texas Transportation Institute and the Center for Transportation Research at UT Austin ran an advertising campaign aimed at recruiting Austin cyclists to join the South Congress Bike Mapping Project.  As members of the project, cyclists downloaded and used Cycle Tracks, a smartphone app developed by the San Francisco County Transportation Authority to track where people are riding their bikes based on their GPS points.  The goal was to gain new information about bike commuting patterns and this data set is based on the results of the study: 3600 trips tracked from 315 users over a 6 month period.   Data includes distances traveled, speed of travel, and reasons for travel among other variables.
+
+
+Primary Research Question
+
+In this Pre Lab, we will ask a question about the bike dataset:  
+
+How many of the cyclists were students, how often did they ride, and what was the average distance they rode?
+
+
+problem
+3 points possible (graded)
+Check the Data
+
+We will always begin by checking the data. Follow the directions below.
+
+Let's begin by examining our data in R.
+
+1. Open RStudio. Make sure you've installed the current version of the SDSFoundations package.
+2. Type library(SDSFoundations) This will automatically load the data for the labs.
+3. Type bike <- BikeData This will assign the data to your Workspace.
+4. Look at the spreadsheet view of the data to answer the following questions.
+
+Alternatively, you can use follow the steps in the "Importing a Data Frame" R tutorial video, and use the BikeData.csv file. (Right-click and "Save As.") Make sure to name the dataframe "bike" when importing.
+
+1. Open RStudio.
+2. Click on "Import Dataset" button at the top of the workspace window. Choose "from text file."
+3. Click on the location of the BikeData.csv file you just downloaded.
+4. Click on the BikeData.csv file. Then, click Upload.
+5. Look at the spreadsheet view of the data to answer the following questions.
+```{r}
+library(SDSFoundations)
+
+bike <- BikeData
+```
+
+Can you locate the answers to these questions by looking at the data frame?
+
+1a. What is the age of the 7th rider in the dataset?
+1b. How many of the first 10 riders in the dataset ride daily?
+1c. What is the speed of the first female who cycles less than one time per month (in miles/hour)?
+```{r}
+bike$age[7]
+table(bike$cyc_freq[1:10])
+bike$speed[4]
+```
+
+Prepare for the Analysis
+
+In this section of pre-lab, you will be shown the R script needed to run the analysis.  You will then be asked a series of questions to help you understand what that code is doing.  Note that you will always be given the R code that you need to run an analysis. When you get to Lab, you will be able to copy and modify this code for your new lab question. Follow the directions below. 
+
+Primary Research Question
+
+How many of the cyclists were students, how often did they ride, and what was the average distance they rode?
+
+Let's break this analysis into its required steps:
+
+
+1. Find the number of students in the dataset.
+2. Pull out the student data into a separate dataframe for analysis.
+3. Make a table to find how often the students ride.
+4. Find the average distance ridden.
+
+Here is the R script you will use: (Remember that # indicates a comment)
+```{r}
+# Find the number of students in the dataset
+table(bike$student)
+
+# Pull out student data into a new dataframe
+student <-bike[bike$student==1,]
+
+# Find how often the students ride, using the new dataframe
+table(student$cyc_freq)
+
+# Create a vector for the distance variable
+distance <-student$distance
+
+# Find average distance ridden
+mean(distance)
+```
+
+Primary Research Question
+
+How many of the cyclists were students, how often did they ride, and what was the average distance they rode?
+
+Conduct the Analysis in R
+
+Now you are ready to run the analysis in R.  You will upload the script into R and then look at the output to answer the lab questions. Follow these directions.
+
+1. Cut and paste the script into the R Script window.
+2. Place the cursor on the line of code you wish to run and then press "ctrl + enter" for PC or "command + r" for Mac.
+3. Look in the console window for the output.
+
+Here is the script you will use:
+```{r}
+# Import the BikeData dataset, name it "bike"
+
+# Find the number of students in the dataset
+table(bike$student)
+
+# Pull out student data into a new dataframe
+student <-bike[bike$student==1,]
+
+# Find how often the students ride, using the new dataframe
+table(student$cyc_freq)
+
+# Create a vector for the distance variable
+distance <-student$distance
+
+# Find average distance ridden
+mean(distance)
+```
+problem
+1 point possible (graded)
+1. How many students are in the dataset? (Hint: Look at the output for table(bike$student).)
+problem
+1 point possible (graded)
+2. How many variables are in the new data frame "student"? (Hint: Look in your Workspace for the new dataframe.)
+problem
+1 point possible (graded)
+3. We want to know how often the students ride. What is the most frequently observed response?
+problem
+1 point possible (graded)
+4. How is the vector "distance" described in the workspace?
+problem
+1 point possible (graded)
+5. How far do students ride on average? (Round to the nearest 0.01)
+
+problem
+5 points possible (graded)
+Write Your Conclusion
+
+Congratulations! You have made it to the final part of the Pre-Lab. In this final section, you are asked to write an answer to the Pre-Lab question, using the results of your analysis as support. We will provide you with a template of what that answer should look like. You just need to fill in the blanks.
+
+In this Pre Lab, we examined data on  unsubmitted student riders. Most of the student riders ( a total of  unsubmitted out of unsubmitted ) rode their bikes  unsubmitted . On average, the students rode about  unsubmitted miles on each trip.
+
+
+Reflect on the Question
+
+Welcome!  This week's lab is intended to be more guided compared to the following weeks as this is your first experience with the lab format for the course.
+
+We will go over several skills that will be important for successfully working with R scripts and data sets for the remainder of the semester. Let's begin by revisiting some of the basic practices you will want to follow when you start each lab.
+
+Lab 1: Cycling in Austin
+
+
+
+ In 2011, researchers at the Texas Transportation Institute and the Center for Transportation Research at UT Austin ran an advertising campaign aimed at recruiting Austin cyclists to join the South Congress Bike Mapping Project.  As members of the project, cyclists downloaded and used Cycle Tracks, a smartphone app developed by the San Francisco County Transportation Authority to track where people are riding their bikes based on their GPS points.  The goal was to gain new information about bike commuting patterns and this data set is based on the results of the study: 3600 trips tracked from 315 users over a 6 month period.   Data includes distances traveled, speed of travel, and reasons for travel among other variables. 
+
+Directions:
+
+
+
+Open R Studio
+Click the "Import Dataset" button at the top of the workspace window.  Choose "from text file."
+Click on the Data folder.
+Select the BikeData file. Make sure "Yes" is checked beside Header. Then click Upload.
+problem
+1 point possible (graded)
+When we first load a dataset, it is a good idea to immediately rename it something simple and familiar to you.
+
+1. In this example, what is the new name for "BikeData?" 
+`bike <- BikeData`
+```{r}
+library(SDSFoundations)
+bike <- BikeData
+```
+bike
+
+problem
+1 point possible (graded)
+In many of our labs, we only want to work with a subset of the data.
+
+2. In this example, which variable is being used to identify the cases that will be included in a new dataframe called "males?"
+`males <- bike [bike$gender == 'M',]`
+```{r}
+males <- bike [bike$gender == 'M',]
+```
+gender
+
+problem
+1 point possible (graded)
+When we want to find an average, we will pull out a vector of the the variable and then take its mean.
+
+3. In this example, a vector called "male_times" will include a string of values from which dataframe?
+`male_times <- males$time`
+```{r}
+male_times <- males$time
+```
+males
+
+problem
+1 point possible (graded)
+4. Assuming we have run the lines of code from the previous questions, if we want to find the mean ride time for the males, what should we place in the parentheses?
+`mean( )`
+```{r}
+mean(male_times)
+```
+
+Analyze the Data
+
+Primary Research Question
+
+How many of the cyclists rode daily, how many of these riders were male and how many female, and what what were their average ages?  
+
+Analysis
+
+Modify the R script from Pre-Lab 1 to complete these steps:
+
+1. Make a table to show how many daily riders are in the original dataset.
+2. Create a new datafile that includes only the daily riders.
+3. Make a table to show the number of male and female daily riders.
+4. Make a vector of the ages of these daily riders.
+5. Find the mean age for men and for women daily riders.
+
+Problems
+1. How many daily riders are in the dataset?
+2. How many of the daily riders are male?
+3. What is the average age of daily riders? (Round to 1 decimal place.)
+4. What is the average age of the female daily riders? (Round to 1 decimal place)
+5. What is the average age of the male daily riders? (Round to 1 decimal place.)
+6. How many daily male riders are age 30 or older?
+
+```{r}
+# Import the BikeData dataset, name it "bike"
+
+library(SDSFoundations)
+bike <- BikeData
+
+# Find the number of daily riders in the dataset
+table(bike$cyc_freq)
+
+# Pull out daily riders into a new dataframe
+dailyRiders <-bike[bike$cyc_freq == "Daily", ]
+
+# Number of Male and Females Daily Riders
+table(dailyRiders$gender)
+
+# Ages of Daily Riders
+ages <- dailyRiders$age
+
+# Mean age for men and for women daily riders
+mean(ages)
+
+# Average age of Female daily riders 
+females <- dailyRiders[dailyRiders$gender == "F", ]
+mean(females$age)
+
+# Average age of Men daily riders
+males <- dailyRiders[dailyRiders$gender == "M", ]
+mean(males$age)
+
+# 30 or Older Male daily riders
+malesOld <- males[males$age >= 30, ]
+nrow(malesOld)
+```
+
+
+Draw Conclusions
+
+Primary Research Question
+
+How many of the cyclists rode daily, how many of these riders were male and how many female, and what what were their average ages?
+
+problem
+6 points possible (graded)
+Write Your Conclusion
+
+
+In this lab, we examined data on  unanswered daily riders. Most of the daily riders (a total of  unanswered ) were  unanswered . The average age of all daily riders was  unanswered . The average age of female daily riders was  unanswered , while the averge age of male daily riders was  unanswered .
+

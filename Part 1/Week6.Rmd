@@ -1,0 +1,872 @@
+---
+title: "Week6"
+author: "Sarfaraz Ahmed"
+date: "July 20, 2017"
+output: html_document
+---
+
+# Lab 6: Worldwide Trends in Internet Usage
+![](https://d37djvu3ytnwxt.cloudfront.net/assets/courseware/v1/9d2b9b46af130f982bf7be6ae9a8a162/asset-v1:UTAustinX+UT.7.11x+2T2017+type@asset+block/internet.jpg)
+
+The World Bank is a data collection of information on all the world’s countries. Data is collected by country, and include items such as total population, CO2 emissions, and the number of mobile device subscriptions. We will examine some of the trends in this dataset and interpret the parameters of the fitted models to best describe the change over time.
+
+Primary Research Question
+
+What model best describes the first decade of internet usage (1990-1999) in the United States? Which model is a better long-term fit?
+
+problem
+3 points possible (graded)
+Check the Data
+
+Let's begin by examining our data in R.
+
+1. Open RStudio. Make sure you've installed the current version of the SDSFoundations package.
+2. Type library(SDSFoundations) This will automatically load the data for the labs. 
+3.Type world <- WorldBankData This will assign the data to your Workspace.
+4. Look at the spreadsheet view of the data to answer the following questions.
+
+Alternatively, you can use follow the steps in the "Importing a Data Frame" R tutorial video, and use the WorldBankData.csv file. (Right-click and "Save As.") Make sure to name the dataframe "world" when importing.
+
+1. Open RStudio.
+2. Click on "Import Dataset" button at the top of the workspace window. Choose "from text file."
+3. Click on the location of the WorldBankData.csv file you just downloaded.
+4. Click on the WorldBankData.csv file. Then, click Upload.
+5. Look at the spreadsheet view of the data to answer the following questions.
+```{r}
+library(SDSFoundations)
+
+world <- WorldBankData
+```
+
+1a) What is the first “Low Income” country in the dataset?
+
+
+Afghanistan
+correct
+1b) What was the rural population of Aruba in 1970? (Report without commas)
+
+
+29164
+correct
+29164 
+1c) When was the first year Australia had data on the number of mobile device subscriptions? (Subscriptions more than 0)
+
+
+1987
+correct
+1987 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (3/3 points) Review
+problem
+4/4 points (graded)
+Check the Variables of Interest
+
+Let's find the variables we need to answer the question.
+
+2a) Which variable tells us the number of internet users in a specific year? The variable name in the dataset is:
+
+correctinternet.users
+2b) What type of variable is this?
+
+correctquantitative
+2c) Which variable tells us when the number of internet users was recorded? The variable name in the dataset is:
+
+correctyear
+2d) What type of variable is this?
+
+correctquantitative
+Click here for a video explanation of how to answer this question.
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Answers are displayed within the problem Review
+problem
+2/2 points (graded)
+Reflect on the Method
+
+Which method should we be using for this analysis and why?
+
+3a) What statistic helps us determine how well a particular model fits the data?
+
+
+Variance
+R-squared correct
+Mean
+3b) In this lab, we will calculate residuals after fitting both an exponential and a logistic model to a set of data. What is a residual?
+
+
+A residual is the difference between a predicted value and the actual observed value. correct
+A residual is the average distance of a data point to the line of best fit.
+A residual is a statistic that tells you how much variation is explained by the model.
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Primary Research Question
+
+What model best describes the first decade of internet usage (1990-1999) in the United States? Which model is a better long-term fit?
+
+Breakdown Your Analysis
+
+Let's break this analysis into its required steps:
+
+1. Create a subset of the dataset that contains only the information for the United States.
+2. Create a subset of the US data that contains only the years 1990 to 1999.  
+3. Use a function to fit both an exponential and a logistic model to the data.  
+4. Using each model, predict the number of internet users in 2006. 
+5. Compare the size of the residuals for 2006 to determine which model appears to have better long-term fit.
+
+Note:  In this lab, you will be creating three new subsets of data by constraining the original world dataset. The names of these three datasets are shown in the table below.  A brief description of each is also provided to help you navigate the R code.
+
+name	description of dataset
+us	contains only the USA data from the world dataset
+us_select	contains only the USA data for the years 1990 and beyond          
+us_select_10    	contains only the USA data for the years 1990 - 1999
+Here is the code you will use:
+```{r}
+# Subset data for just the United States and name the new data frame "us"
+us <- world[world$Country.Code == "USA",]
+
+# Select the years from 1990 and name the new data frame "us_select"
+us_select <- us[us$year >= 1990, ]
+
+# Create a new variable in our datset called internet.mil to make the number of users more interpretable (into millions)
+us_select$internet.mil <- us_select$internet.users / 1000000
+
+# Create a new variable in our dataset called time that represents "years since 1990"
+us_select$time <- us_select$year - 1990
+
+# Select the first 10 years (from 1990 to 1999) and name the new data frame "us_select_10"
+us_select_10 <- us_select[us_select$time < 10,]
+
+# Use a function to fit an exponential and logistic model for 1990-1999
+expFit(us_select_10$time, us_select_10$internet.mil)
+logisticFit(us_select_10$time, us_select_10$internet.mil)
+
+# Based on the prior model parameters, predict the number of internet users in 2006
+e <- expFitPred(us_select_10$time, us_select_10$internet.mil, 16)
+l <- logisticFitPred(us_select_10$time, us_select_10$internet.mil, 16)
+
+```
+
+problem
+1/1 point (graded)
+1) In both of these models, what does Year 0 correspond to?
+
+
+1990 correct
+2012
+1995
+2000
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+2) Which functions will you use to fit exponential and logistic models to the data?
+
+
+internet.mil()
+us_select
+expFit() and logisticFit() correct
+exp(model) and log(model)
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+3) What will be the value of "us_select$time" for 2006?
+
+
+6
+16 correct
+90
+2006
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+problem
+1/1 point (graded)
+4) In 1990, the number of internet users in the US was 1,958,863. What will be the value of "us_select$internet.mil" for 1990 after this line of code is run?
+
+# Create a new variable in our dataset called internet.mil to make the number of users more interpretable (into millions)
+`us_select$internet.mil <- us_select$internet.users / 1000000`
+
+
+19.58863
+1.958863 correct
+1958,863
+195.8863
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+problem
+1/1 point (graded)
+5) Suppose we wanted to create a subset of data that contained only Belgium entries that were from 1990 and onward. What error was made in the code below? (Notice that R does not report some types of errors, making it very important to check your data as you go.)
+
+`world <- WorldBankData`
+`belgium <- world[world$Country == 'Belgium',]`
+`recent_belgium <- world[world$year >= 1990,]`
+
+
+The "Country" variable has only 3 letter entries.
+We pulled our data from the wrong dataset in the second line.
+We pulled our data from the wrong dataset in the third line. correct
+There is not a "Country" variable in the dataset to use.
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+
+
+Primary Research Question
+
+What model best describes the first decade of internet usage (1990-1999) in the United States? Which model is the best long-term fit?
+
+Conduct the Analysis in R
+
+1. Type or copy the script from the Prepare for the Analysis section into the Script window of R.
+2. Select the portion of the code you wish to run, then press "ctrl+ enter." 
+3. Output can be found in the Console window.
+```{r}
+# Subset data for just the United States and name the new data frame "us"
+us <- world[world$Country.Code == "USA",]
+
+# Select the years from 1990 and name the new data frame "us_select"
+us_select <- us[us$year >= 1990, ]
+
+# Create a new variable in our datset called internet.mil to make the number of users more interpretable (into millions)
+us_select$internet.mil <- us_select$internet.users / 1000000
+
+# Create a new variable in our dataset called time that represents "years since 1990"
+us_select$time <- us_select$year - 1990
+
+# Select the first 10 years (from 1990 to 1999) and name the new data frame "us_select_10"
+us_select_10 <- us_select[us_select$time < 10,]
+
+# Use a function to fit an exponential and logistic model for 1990-1999
+expFit(us_select_10$time, us_select_10$internet.mil)
+logisticFit(us_select_10$time, us_select_10$internet.mil)
+
+# Based on the prior model parameters, predict the number of internet users in 2006
+e <- expFitPred(us_select_10$time, us_select_10$internet.mil, 16)
+l <- logisticFitPred(us_select_10$time, us_select_10$internet.mil, 16)
+```
+
+problem
+2/2 points (graded)
+1) Report the parameters of the exponential model for the number of internet users in the US for years 1990-1999. (Round to 3 decimal places)
+
+a=
+
+1.872
+correct
+1.872 
+b=
+
+1.608
+correct
+1.608 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (2/2 points) Review
+problem
+1/2 points (graded)
+2) Report these parameters of the logistic model for the number of internet users in the US for years 1990-1999. (Round to 1 decimal place)
+
+C=
+
+127794
+incorrect127.8
+127794 
+a=
+
+121.4
+correct121.4
+121.4 
+Click here for a video explanation of how to answer this question.
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Answers are displayed within the problem Review
+problem
+1/1 point (graded)
+3) What was the actual number of internet users (in millions) in the United States in 2006? (Round to 1 decimal place)
+
+
+205.7
+correct
+205.7 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+4/4 points (graded)
+How well did the exponential and logistic models predict the number of internet users in 2006?
+
+4a) The exponential model predicted __________ million users in 2006. The residual was _______.
+
+correct
+correct
+4b) The logistic model predicted _______ million users in 2006. The residual was _______.
+
+correct
+correct
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (4/4 points) Review
+problem
+1/1 point (graded)
+5) Based on the model residuals for 2006, which model do you think does a better job of predicting (long-term) the number of internet users?
+
+
+Both models predict the number of internet users in 2006 equally well.
+The exponential model.
+The logistic model. correct
+Neither model is a good fit for the data.
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+
+Primary Research Question
+
+What model best describes the first decade of internet usage (1990-1999) in the United States?  Does this model hold through 2012?
+
+problem
+6/6 points (graded)
+Write Your Conclusion
+
+Answer the question and support your answer with statistics:
+
+correctBoth the logistic and exponential models do/does a fairly good job of fitting the pattern of internet usage in the United States from 1990-1999, as shown by R-squared values  correctgreater than 0.95. If we look ahead to 2006, however, we see that the  correctlogistic model has a better long-term fit. This model predicted  correct127.5 million users in 2006, with a smaller residual of  correct78.2 million. The  correctexponential model predicted far more users than there really were. It appears that the number of new internet users grew rapidly at first but then began to level off over time.
+
+
+# Lab 6: Worldwide Trends in Internet Usage
+![](https://d37djvu3ytnwxt.cloudfront.net/assets/courseware/v1/9d2b9b46af130f982bf7be6ae9a8a162/asset-v1:UTAustinX+UT.7.11x+2T2017+type@asset+block/internet.jpg)
+The World Bank is a data collection of information on all the world’s countries. Data is collected by country, and include items such as total population, CO2 emissions, and the number of mobile device subscriptions. We will examine some of the trends in this dataset and interpret the parameters of the fitted models to best describe the change over time.
+
+problem
+3/3 points (graded)
+Review of Exponential and Logistic Models
+
+In this lab, you will use exponential and logistic models to answer a question of interest. Let's start by remembering how we approach a modeling problem.
+
+
+1) When choosing between two models with very similar R2 values, what additional statistic should you examine to help you select the best-fitting model?
+
+
+The sum of squares
+The residuals correct
+The value of r
+the mean and standard deviation of the dependent variable
+2) Which parameter represents the rapidity of growth (or change) in both the exponential and the logistic model?
+
+
+a
+t
+C
+b correct
+3) Most biological data will follow a logistic growth model. Why?
+
+
+The logistic model does a better job at estimating the initial growth rate than the exponential model.
+The logistic model never decays; it only increases with time.
+The logistic model takes into account the fact that most growth does not continue indefinitely. correct
+Submit You have used 1 of 2 attempts Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Save Save Your Answer   
+Show Answer
+Correct (3/3 points) Review
+Lab Preparation
+
+In this lab you will be working with data from the World Bank.
+
+1. Open RStudio. Make sure you've installed the current version of the SDSFoundations package.
+2. Type library(SDSFoundations) This will automatically load the data for the labs. 
+3.Type world <- WorldBankData This will assign the data to your Workspace.
+
+Alternatively, you can follow the steps in the "Importing a Data Frame" R tutorial video, and use the WorldBankData.csv file. (Right-click and "Save As.") Make sure to name the dataframe "world" when importing.
+
+1. Open RStudio.
+2. Click on "Import Dataset" button at the top of the workspace window. Choose "from text file."
+3. Click on the location of the WorldBankData.csv file you just downloaded.
+4. Click on the WorldBankData.csv file. Then, click Upload.
+
+Feel free to use the script from the week's PreLab, which you can modify for use in this Lab.
+
+Analyze the Data
+
+Primary Research Question
+
+Denmark is a high-income country in Europe of about 5.5 million people. What is the best-fitting model for growth of internet usage in Denmark since 1990?  
+
+Analysis
+
+Let’s break this question down into the different descriptive statistics that you will need to construct your answer.  Be sure that your R output includes all of the following components. 
+
+1. Create a variable that represents proportion of the population using the internet (internet users divided by population).
+2. Create a subset of the data that only contains data from 1990 onward.
+3. Create a new variable that is "years since 1990". 
+4. Create two new data frame for the country of interest.
+5. Determine the best-fitting model (exponential or logistic) for internet usage in each country from 1990 onward.
+
+```{r}
+# Subset data for just the United States and name the new data frame "us"
+denmark <- world[world$Country.Code == "DNK",]
+
+# Select the years from 1990 and name the new data frame "us_select"
+denmark_select <- denmark[denmark$year >= 1990, ]
+
+# Create a new variable in our datset called internet.mil to make the number of users more interpretable (into millions)
+denmark_select$proportion <- denmark_select$internet.users / denmark_select$population
+
+# Create a new variable in our dataset called time that represents "years since 1990"
+denmark_select$time <- denmark_select$year - 1990
+
+# Select the first 10 years (from 1990 to 1999) and name the new data frame "us_select_10"
+#denmark_select_10 <- denmark_select[denmark_select$time < 10,]
+
+# Use a function to fit an exponential and logistic model for 1990-1999
+expFit(denmark_select$time, denmark_select$proportion)
+logisticFit(denmark_select$time, denmark_select$proportion)
+
+# Based on the prior model parameters, predict the number of internet users in 2006
+e <- expFitPred(denmark_select$time, denmark_select$proportion, 0)
+l <- logisticFitPred(denmark_select$time, denmark_select$proportion, 0)
+```
+
+problem
+1/3 points (graded)
+Model Fit Statistics
+
+Report the model fit statistic (R2) for each of the following models. Round to 4 decimal places.
+
+1a) Exponential growth model for Denmark:
+
+
+0.9932
+incorrect.8001
+0.9932 
+1b) Logistic growth model for Denmark:
+
+
+0.9964
+incorrect.9949
+0.9964 
+1c) What is the best-fitting model for growth of internet usage in Denmark from 1990 onward?
+
+
+logistic correct
+neither logistic nor exponential
+exponential
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Answers are displayed within the problem Review
+problem
+0 points possible (ungraded)
+Exponential Models
+
+Use the exponential model to answer the following questions:
+
+2a) What is the growth factor for the exponential model? (Round to 3 decimal places.)
+
+
+1.352
+incorrect1.347
+1.352 
+2b) What is the percent growth rate of internet use, according to the exponential model? (Round to a whole-number percentage, but report without using "%")
+
+
+35
+correct35
+ 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Answers are displayed within the problem Review
+problem
+2/2 points (graded)
+Logistic Models
+
+Use the logistic model to answer the following questions:
+
+3a) What is the carrying capacity in Denmark? (Round to 4 decimal places.)
+
+
+0.8966
+correct.8967
+\(\) 
+3b) What is the value of b (the growth indicator) in Denmark? (Round to 2 decimal places.)
+
+
+1.73
+correct1.73
+\(\) 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Answers are displayed within the problem Review
+problem
+0/2 points (graded)
+Prediction Using Both Models
+
+4a) In what YEAR does the exponential model predict that 70% of the Denmark population would be using the internet? Use the equation to solve. (Round to a whole number.)
+
+
+16
+incorrect2006
+\(\) 
+4b) In what YEAR does the logistic model predict that 70% of the Denmark population would be using the internet? Use an equation to solve. (Round to a whole number.)
+
+
+13
+incorrect2003
+\(\) 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Primary Research Question
+
+Denmark is a high-income country in Europe of about 5.5 million people. What is the best-fitting model for growth of internet usage in Denmark since 1990? 
+
+problem
+6/7 points (graded)
+Write Your Conclusion
+
+Answer the question and support your answer with statistics:
+
+After using both an exponential and a logistic function to model Denmark's growth of internet usage since 1990, we found that the  correctlogistic model fit better with a high R-squared value of  correct.995 , compared to an R-squared value of correct.800 for the exponential model. In addition, it is visually clear from the graphs that the logistic model fit the observed data better than the exponential model. All of this suggests that we should trust predictions from the logistic model more than predictions from the exponential model. The exponential model suggests that in 1990, there was a predicted proportion of  incorrect.00585 of Denmark's population that used internet, with the proportion of internet users increasing by a factor of  correct1.347 every year after 1990, on average. The logistic model shows that the predicted  correctcarrying capacity of the proportion of people who use internet in Denmark was .8967. Since the logistic model fits better, the proportion of internet users in Denmark will probably eventually correctlevel off rather than continuing to grow exponentially.
+
+
+## Problem Set
+
+Question 1
+
+How has mobile phone usage in Brazil changed since 1995?
+
+1. Create a subset of the world bank data that contains records from Brazil 1995 and later.
+
+2. Change the year variable to be "years since 1995" and update the units of the "mobile.users" variable to millions of users. 
+
+3. Use this data to answer the following questions.
+
+Use the "WorldBankData.csv" dataset to answer the following questions.  Instructions for installing "WorldRecords.csv" can be found under the Examine the Data unit in this week's Pre-Lab section.
+```{r}
+brazil <- world[world$Country.Code == "BRA" & world$year >= 1995,]
+brazil$year <- brazil$year - 1995
+brazil$mobile.users <- brazil$mobile.users / 1000000
+
+tripleFit(brazil$year, brazil$mobile.users)
+
+l <- logisticFitPred(brazil$year, brazil$mobile.users, 2025)
+```
+
+problem
+1/1 point (graded)
+1a. Use RStudio to find the number of mobile users in Brazil (in millions) in 2000. (Round to 2 decimal places.)
+
+
+23.19
+correct
+23.19 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+1b. In what year did Brazil first record more than 100 million mobile users?
+
+
+2007
+correct
+2007 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+0 points possible (ungraded)
+1c. Generate a scatterplot and fit a linear, exponential and logistic model to the data. Which model best describes the increase in mobile users in Brazil since 1995?
+
+
+Exponential Model
+Linear Model
+Logistic Growth Model correct
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct Review
+problem
+1/1 point (graded)
+1d. What proportion of the variation in mobile users is explained by years since 1995 in the best‐fitting model? (Round to 3 decimal places.)
+
+
+0.996
+correct
+0.996 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+0/1 point (graded)
+1e. Using the best‐fitting model, predict the number of mobile users (in millions) in Brazil in 2025. (Round to a whole number.)
+
+
+347.932
+incorrect345
+347.932 
+
+
+Question 2
+
+Records at the Center for Disease Control show that the total number of flu cases in Spring, 2009 looked like this:
+
+Date	Day	Flu Cases
+April 27	0	73
+April 28	1	105
+April 29	2	137
+April 30	3	257
+May 1	4	367
+May 2	5	658
+May 3	6	898
+May 4	7	1,085
+May 5	8	1,490
+May 6	9	1,893
+An initial examination of the data showed that both an exponential and a logistic growth model fit the data well:
+
+Exponential Model	Logistic Growth Model
+a = 76.64	C = 3,273.31
+b = 1.46	a = 43.59
+R-squared = 0.984	b = 1.57
+R-squared = 0.996
+Use the data from the TABLE of Models to answer the following questions.
+
+problem
+0/1 point (graded)
+2a. Looking at the raw data, what is the rate of change in flu cases from April 30 to May 1? (Report as a proportion rounded to 2 decimal places.)
+
+
+110
+incorrect.43
+110 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Answers are displayed within the problem Review
+problem
+0/1 point (graded)
+2b. What is the growth rate for the flu, according to the exponential model? (Report as a proportion rounded to 2 decimal places.)
+
+
+1.46
+incorrect.46
+1.46 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Answers are displayed within the problem Review
+problem
+1/1 point (graded)
+2c. Predict the number of cases of flu on Day 14 (when "Day" is equal to 14), using the exponential model. (Round to a whole number, without a comma)
+
+
+15325
+correct
+15325 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+2d. Using the logistic model, predict the total number of flu cases on Day 14. (Round to a whole number, without a comma.)
+
+
+3034
+correct
+3034 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+0/1 point (graded)
+2e. The actual number of flu cases on Day 14 was 4,379. Find the residual of the exponential model prediction. (Round to zero decimal places, without a comma.)
+
+
+10946
+incorrect-10946
+10946 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Answers are displayed within the problem Review
+problem
+1/1 point (graded)
+2f. What is the residual of the logistic model prediction for Day 14? (Round to a whole number, without a comma.)
+
+
+1345
+correct
+1345 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+5/5 points (graded)
+Based on the residuals of both models, what conclusion would you reach? Fill in the missing blanks.
+
+The better fit statistic of the  correct model suggests that the number of new flu cases will  correct . Based on this model, we would expect the maximum number of flu cases in the 2009 season to be:  correct . However,  correct does a perfect job of predicting future cases by Day 14. We will need to observe how the data changes  correct to determine how the model needs to be adjusted.
+
+
+Question 3
+
+3. Yellowstone National Park began a project to restore its native wolf population in the mid 1990's. Below are the number of wolves soon after the start of the project:
+
+Year	Years since Project Began	Number of Wolves
+1996	1	25
+1998	3	45
+problem
+1/1 point (graded)
+3a. Researchers fit a linear model to the wolf data. Using this model, how many wolves were being added to the park each year? (Round to a whole number.)
+
+
+10
+correct
+10 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+3b. According to their linear model, what was the size of the original wolf population when the project began?
+
+
+15
+correct
+15 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+0/1 point (graded)
+3c. Another researcher assumed that the wolves would experience exponential growth because there were no predators. He fit an exponential model to this data. What is the growth factor for this model? (Round to 2 decimal places.)
+
+
+1.875
+incorrect1.34
+1.875 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Answers are displayed within the problem Review
+problem
+1/1 point (graded)
+3d. What is the annual growth rate of these wolves each year, according to this model? (Report as a proportion rounded to 2 decimal places.)
+
+
+0.34
+correct
+0.34 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+3e. Assuming exponential growth, find the initial number of wolves when the project began. Use your rounded answer from the previous question. (Round to a whole number.)
+
+
+19
+correct
+19 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+3f. By 2002, there were 147 wolves in Yellowstone Park. Which model was determined to fit the data better?
+
+
+Exponential correct
+Linear
+Neither model appears to fit well
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+0/1 point (graded)
+3g. Using the best‐fitting model, how many years must pass before there are more than 325 wolves in Yellowstone? (Round to a whole number.)
+
+
+2006
+incorrect10
+2006 
+
+
+
+Question 4
+
+4. A group of hedgehogs was released in the south‐Austin area. Each year, the size of the population was recorded. Their population growth over time was modeled with a logistic growth curve. The model fit was 0.972.
+
+Here are the model parameters: 
+
+C = 2,000
+
+a = 152.10
+
+b = 2.17
+
+problem
+1/1 point (graded)
+4a. According to this model, what will be the maximum number of hedgehogs in South Austin?
+
+
+2000
+correct
+2000 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+4b. What was the size of the hedgehog population when the growth rate began to slow down?
+
+
+1000
+correct
+1000 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+0/1 point (graded)
+4c. How many years had passed when the population growth rate began to slow down? (Round to 1 decimal place.)
+
+
+7
+incorrect6.5
+7 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Answers are displayed within the problem Review
+problem
+1/1 point (graded)
+4d. The hedgehogs were released in South Austin in 2001. How many hedgehogs were living in South Austin by 2010, according to the model? (Round to a whole number.)
+
+
+1750
+correct
+1750 

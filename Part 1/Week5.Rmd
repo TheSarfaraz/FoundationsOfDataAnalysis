@@ -1,0 +1,689 @@
+---
+title: "Week5"
+author: "Sarfaraz Ahmed"
+date: "July 18, 2017"
+output: html_document
+---
+
+
+# Lab 4: Track and Field World Records
+
+![](https://d37djvu3ytnwxt.cloudfront.net/assets/courseware/v1/c4823f5ba887fd530127c568af979572/asset-v1:UTAustinX+UT.7.11x+2T2017+type@asset+block/track.jpg)
+Every four years, track and field athletes take the world stage at the Summer Olympics.  Some of the most exciting events during each Olympics are those in which athletes push the limits of their sport, breaking their own personal best records, national records, or even world records.  We have compiled the world record times for track events like the 100m dash and record distances for field events like the shotput into a single dataset.  This dataset includes information on the person who broke the record, his/her nationality, where the record was broken, and the year it was broken.  Note that not all world records are broken during the Olympics, with many occurring in regional or national competitions.
+
+Primary Research Question
+
+How has the men’s shotput world record changed over time?  What about the women’s world record?
+
+problem
+3 points possible (graded)
+Check the Data
+
+Let's begin by examining our data in R.
+
+1. Open RStudio. Make sure you've installed the current version of the SDSFoundations package.
+2. Type library(SDSFoundations) This will automatically load the data for the labs. 
+3.Type WR <- WorldRecords This will assign the data to your Workspace.
+4. Look at the spreadsheet view of the data to answer the following questions.
+
+Alternatively, you can use follow the steps in the "Importing a Data Frame" R tutorial video, and use the WorldRecords.csv file. (Right-click and "Save As.") Make sure to name the dataframe "WR" when importing.
+
+1. Open RStudio.
+2. Click on "Import Dataset" button at the top of the workspace window. Choose "from text file."
+3. Click on the location of the WorldRecords.csv file you just downloaded.
+4. Click on the WorldRecords.csv file. Then, click Upload.
+5. Look at the spreadsheet view of the data to answer the following questions.
+```{r}
+library(SDSFoundations)
+
+WR <- WorldRecords
+
+table(WR$Event)
+
+WR[WR$Athlete == "Usain Bolt",]
+
+str(WR)
+```
+
+1a. How many different types of events (e.g. "Mens 100m," "Womens shotput," etc.) are represented in the dataset?
+
+
+10
+correct
+10 
+1b. In what year did Usain Bolt first break the world record for the men's 100m dash?
+
+
+2008
+correct
+2008 
+1c. Who was the first woman to break the women’s 1 mile world record with a time of less than 260 seconds?
+
+
+Mary Slaney
+correct
+
+
+problem
+3/4 points (graded)
+Check the Variables of Interest
+
+Let's find the variables we need to answer the question.
+
+2a. Which variable tells us the record setting time or distance? The variable name in the dataset is:
+
+correctRecord
+2b. What type of variable is this?
+
+correctQuantitative
+2c. Which variable tells us when the record was broken? The variable name in the dataset is:
+
+correctYear
+2d. What type of variable is this?
+
+incorrect
+Quantitative
+
+
+problem
+2/2 points (graded)
+Reflect on the Method
+
+Which method should we be using for this analysis and why?
+
+
+3. For each sex, we will begin our analysis by generating a scatterplot of shotput distance and year. Why?
+
+
+The scatterplot will show us how many athletes broke the shotput world record.
+The scatterplot will show us how much the men's and the women's records differ.
+The scatterplot will show us if these two numeric variables are linearly related. correct
+4. What will we be able to determine once we fit a linear model to this shotput world record data?
+
+
+We will be able to report the average rate of change in world record shotput distance per year. correct
+We can determine if men throw a shotput significantly farther than women ever will.
+We can say how often the world record for men and women's shotput is broken.
+
+
+Primary Research Question
+
+How has the men’s shotput world record changed over time?  What about the women’s world record?
+
+Breakdown Your Analysis
+
+Let's break this analysis into its required steps:
+
+1. Create a subset of the dataset that contains only the World Record cases for men’s shotput.
+2. Create a subset that contains only the World Record cases for women's shotput. 
+3. Create a scatterplot of year and record shotput distance: one for men and one for women.  
+4. Confirm from these plots that a linear model is appropriate.  
+5. Run a linear model for each event and then interpret the results.
+
+Here is the code you will use:
+```{r}
+#Subset the data
+menshot <- WR[WR$Event=='Mens Shotput',]
+womenshot <- WR[WR$Event=='Womens Shotput',] 
+
+#Create scatterplots
+plot(menshot$Year,menshot$Record,main='Mens Shotput World Records',xlab='Year',ylab='World Record Distance (m)',pch=16)
+plot(womenshot$Year,womenshot$Record,main='Womens Shotput World Records',xlab='Year',ylab='World Record Distance (m)',pch=16)
+
+#Run linear models
+??linFit
+linFit(menshot$Year, menshot$Record)
+linFit(womenshot$Year,womenshot$Record)
+```
+
+problem
+1/1 point (graded)
+1) What is the best description of what will be included in the new dataframe "menshot"?
+
+
+Only those columns in WR that include data from the men's shotput.
+All rows and columns from WR.
+Only those rows in WR that include the event Mens Shotput. correct
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+2) Which variable will be on the x-axis of each scatterplot?
+
+
+Sex (male or female)
+Year correct
+Distance
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+3) Which function will we use to fit a linear model to the world record data?
+
+
+linFit correct
+menshot
+plot
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+4) What is the dependent variable in our linear models?
+
+
+Sex (male or female)
+Shotput distance correct
+Year
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+5) Suppose we wanted to subset our dataset for only world records that were from 1990 and later. What caused the error below? (You may want to examine the dataset in R for help.)
+
+WR<-WorldRecords
+recent<-WR[Year>=1990,]
+
+Error in [.data.frame (WR, Year >= 1990, ) : object 'Year' not found
+We forgot to tell R to look in the "recent" dataset for "Year" (ie. recent$Year).
+We forgot to tell R to look in the "WR" dataset for "Year" (ie. WR$Year).> correct
+We need quotation marks around 1990 even though it is numerical.
+The "Year" variable is spelled differently in our dataset.
+
+Primary Research Question
+
+How has the men’s shotput world record changed over time?  What about the women’s world record?
+
+Conduct the Analysis in R
+
+1. Type or copy the script from the Prepare for the Analysis section into the Script window of R.
+2. Select the portion of the code you wish to run, then press "ctrl+ enter." 
+3. Output can be found in the Console window.
+
+problem
+2/2 points (graded)
+1a. How many records are in the menshot data frame?
+
+
+39
+correct
+39 
+1b. How many records in the womenshot data frame?
+
+
+41
+correct
+41 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (2/2 points) Review
+problem
+2/2 points (graded)
+As you look at the scatterplot:
+
+2a. Is a linear model appropriate for the men’s shotput data?
+
+correct
+2b. Is a linear model appropriate for the women’s shotput data?
+
+correct
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (2/2 points) Review
+problem
+3/3 points (graded)
+What is the equation for the linear model that predicts the World Record shotput distance for men?
+
+3a. record distance = ________ + (________ * year)
+
+correct
+correct
+3b. What is the value of R2?
+
+correct
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (3/3 points) Review
+problem
+3/3 points (graded)
+What is the equation for the linear model that predicts the World Record shotput distance for women?
+
+4a. record distance = ________ + ( ________ * year)
+
+correct
+correct
+4b. What is the value of R2?
+
+correct
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (3/3 points) Review
+problem
+1/1 point (graded)
+5. What can we say about the models for men and women?
+
+
+There is no difference in the rate of change for men and women.
+The rate of change is greater for men than for women.
+The rate of change is greater for women than for men. correct
+The two models cannot be compared because they are different events.
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Primary Research Question
+
+How has the men’s shotput world record changed over time?  What about the women’s world record?
+
+problem
+6/6 points (graded)
+Write Your Conclusion
+
+Answer the question and support your answer with statistics:
+
+Based on scatterplots of the men’s and women’s world record shotput distance, both of these events follow a strong, correctpositive linear relationship over time. The men’s world record distance increases by an average of  correct0.134 meters per year, while the women’s record distance increases by an average of correct0.234 meters per year. Because the intercept estimate is the value of the record distance when correctyear is equal to 0, it is not interpretable in the context of the problem. Both linear models fit the data well, with R-squared values for the men’s and women’s models equal to correct0.941 and correct0.962 , respectively.
+
+# Lab 5: Track and Field World Records
+![](https://d37djvu3ytnwxt.cloudfront.net/assets/courseware/v1/c4823f5ba887fd530127c568af979572/asset-v1:UTAustinX+UT.7.11x+2T2017+type@asset+block/track.jpg)
+Every four years, track and field athletes take the world stage at the Summer Olympics.  Some of the most exciting events during each Olympics are those in which athletes push the limits of their sport, breaking their own personal best records, national records, or even world records.  We have compiled the world record times for track events like the 100m dash and record distances for field events like the shotput into a single dataset.  This dataset includes information on the person who broke the record, his/her nationality, where the record was broken, and the year it was broken.  Note that not all world records are broken during the Olympics, with many occurring in regional or national competitions.
+
+problem
+1/1 point (graded)
+Review of Linear Modeling
+
+In this lab, you will use linear modeling to answer a question of interest. Let's start by remembering what it means to fit linear models.
+
+
+1a. When fitting a model to data, what should you do first to examine the data?
+
+
+Create a scatterplot of the two variables of interest. correct
+Generate a histogram to determine the shape of the distribution.
+Run a linear model and look at the R-squared value.
+Visually examine the dataset to see what kinds of patterns are visible.
+Submit You have used 1 of 2 attempts Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Save Save Your Answer   
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+1b. When fitting a linear model, what will tell you the proportion of variance in the dependent variable that can be explained by the independent variable?
+
+
+the R-squared value correct
+the intercept estimate
+the correlation
+the slope estimate
+Submit You have used 1 of 2 attempts Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Save Save Your Answer   
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+Lab Preparation
+
+In this lab you will be working with world record data in various track and field events.
+
+1. Open RStudio. Make sure you've installed the current version of the SDSFoundations package.
+2. Type library(SDSFoundations) This will automatically load the data for the labs. 
+3.Type WR <- WorldRecords This will assign the data to your Workspace.
+
+Alternatively, you can use follow the steps in the "Importing a Data Frame" R tutorial video, and use the WorldRecords.csv file. (Right-click and "Save As.") Make sure to name the dataframe "WR" when importing.
+
+1. Open RStudio.
+2. Click on "Import Dataset" button at the top of the workspace window. Choose "from text file."
+3. Click on the location of the WorldRecords.csv file you just downloaded.
+4. Click on the WorldRecords.csv file. Then, click Upload.
+
+Feel free to use the script from the week's PreLab, which you can modify for use in this Lab.
+
+2. You will be answering one of the following questions in lab. Which of these questions might be answered using linear modeling?
+
+
+How have world record times for the men's and women's mile event changed over the years? correct
+What did the distribution of heights look like in the last men's polevault competition?
+How do the men's and women's fastest times in the mile compare?
+Who holds the current world record for the 800m?
+Submit You have used 1 of 2 attempts Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Primary Research Question
+
+How have the world record times for the men's and the women’s mile event changed over the years?
+Analysis
+
+Let’s break this question down into the different descriptive statistics that you will need to construct your answer.  Be sure that your R output includes all of the following components.
+
+1. Create a subset of the data that contains World Record cases for the men’s Mile event.
+2. Create a subset of the data that contains World Record cases for the women's Mile event. 
+3. Create a scatterplot for each relationship of Mile time and year: one for men and one for women.  
+4. Confirm from these plots that a linear model is appropriate.  
+5. Run a linear model for each event and then interpret the results. Be sure to calculate R-squared values for each model.
+```{r}
+menmile <- WR[WR$Event=='Mens Mile',]
+womenmile <- WR[WR$Event=='Womens Mile',] 
+
+#Create scatterplots
+plot(menmile$Year,menmile$Record,main='Mens Mile World Records',xlab='Year',ylab='World Record Distance (m)',pch=16)
+plot(womenmile$Year,womenmile$Record,main='Womens Mile World Records',xlab='Year',ylab='World Record Distance (m)',pch=16)
+
+#Run linear models
+linFit(menmile$Year, menmile$Record)
+linFit(womenmile$Year,womenmile$Record)
+```
+
+problem
+1/1 point (graded)
+1. Which scatterplot shows a stronger linear relationship between World Record times in the Mile and Year:
+
+correct
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+problem
+0 points possible (ungraded)
+2. On average, how many seconds do men trim off the world record time in the Mile each year? (Round to three decimal places)
+
+
+0.393
+correct
+0.393 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct Review
+problem
+1/1 point (graded)
+3. On average, how many seconds do women trim off the world record time in the Mile each year? (Round to three decimal places)
+
+
+0.973
+correct
+0.973 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+4. How many years would you predict it would take for the men’s mile record to decrease by one full second? Use the model equation to help you answer the question.
+
+
+About 18 years
+About 2.5 years correct
+About 3.5 years
+About 4 years
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+5. How many years would you predict it would take for the women’s mile record to decrease by one full second? Use the model equation to help you answer the question.
+
+
+About 8 years
+About 4.5 years
+About 2 years
+About 1 year correct
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+6. What proportion of variance in the men's World Record times in the Mile can be explained by year? (Round to three decimal places)
+
+
+0.977
+correct
+0.977 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+7. What proportion of the variance in women's World Record times in the Mile can be explained by year? (Round to three decimal places)
+
+
+0.896
+correct
+0.896 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+8. Which of the following is a reasonable conclusion to draw from this analysis?
+
+
+A linear model is a good fit for describing the decrease in record time for the Mile for men, but not for women.
+We cannot fit a linear model to either the men's or the women's mile.
+World record times in the Mile have decreased linearly over the last several decades for both men and women. correct
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Primary Research Question
+
+How have the world record times for the men's and the women’s mile event changed over the years?
+
+problem
+8/8 points (graded)
+Write Your Conclusion
+
+Based on scatterplots of the men’s and women’s world record mile event, both of these events follow a strong,  correctnegative relationship over time. For both groups, the assumption of linearity appears to be satisﬁed. The men’s world record mile time decreases by an average of correct.393 seconds per year, while the women's record distance decreases by an average of  correct.973 seconds per year. Because the  correctintercept estimate is the value of the record time when year is equal to 0, it is not interpretable in the context of the problem. Both linear models ﬁt the data well, with R-squared values for the men's and women's models equal to correct.977 and  correct.896 , respectively. For the men's world record, 97.7% of the  correctvariance is explained by the linear model of year, while for the female world record, 89.6% of the  correctvariance in performance can be explained by the linear model of year.
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+
+Question 1
+
+We want to find the best-fitting linear model for men's pole vault world records since 1970.
+
+1.  Create a new data frame that contains the world record cases in the men's pole vault event in years 1970 and later. 
+
+2. Use this data frame to answer the following questions.
+
+Use the "WorldRecords.csv" dataset to answer the following questions.  Instructions for installing "WorldRecords.csv" can be found under the Examine the Data unit in this week's Pre-Lab section.
+```{r}
+polevault <- WR[WR$Event == "Mens Polevault" & WR$Year >= 1970,]
+
+plot(polevault$Year, polevault$Record)
+
+linFit(polevault$Year, polevault$Record)
+
+```
+
+problem
+1/1 point (graded)
+1a. What is the standing world record height (in meters) for men's pole vault? (Round to 2 decimal places.)
+
+
+6.14
+correct
+6.14 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+1b. In what year did the pole vault record first exceed 6 meters? (Look at the data to find the year.)
+
+
+1986
+correct
+1986 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+1c. Create a scatterplot showing the men's pole vault records since 1970 as a function of year. Fit a linear model to the data.
+
+Which of the following best describes how the record has changed over time?
+
+
+The record pole vault height steadily increases over time. correct
+The record pole vault height steadily decreases over time.
+The record pole vault height has a clear non-linear relationship with year.
+The record pole vault height doesn't seem to have any relationship with year.
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+0/1 point (graded)
+Report the coefficient estimates for the linear model that describes the change in the men's pole vault world record since 1970.
+
+1d. What is the intercept? (Round to 3 decimal places.)
+
+
+1786.91
+incorrect-51.854
+1786.91 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Answers are displayed within the problem Review
+problem
+1/1 point (graded)
+1e. What is the slope? (Round to 3 decimal places.)
+
+
+0.029
+correct
+0.029 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+1f. Which of the following best describes how the men's pole vault world record has changed since 1970?
+
+
+The record has increased by an average of one meter every 0.03 years since 1970.
+The record has increased by an average of one meter every 0.97 years since 1970.
+The record has increased by an average of 0.03 meters per year since 1970. correct
+The record has increased by an average of 0.97 meters per year since 1970.
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+
+Question 2
+
+The table below shows several points for the function C = f(h), where C is the cost (in dollars) for a band of 4 members to play at a wedding, based on the number of hours, h, they perform.
+
+C	140	280	420	560
+h	0	2	4	6
+problem
+1/1 point (graded)
+2a. Which variable is the independent variable?
+
+
+C
+h correct
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+2b. Identify the y-intercept for this function.
+
+
+140 correct
+280
+420
+Unknown
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+2c. How much does the band charge per hour that they perform?
+
+
+$35
+$70 correct
+$100
+$140
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+0/1 point (graded)
+2d. If each member of the band earned $175 for the night and profits were split evenly among them, how many hours did the band perform?
+
+
+1 hour
+2.5 hours
+6 hours incorrect
+8 hours correct
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Question 3
+
+We have bivariate data on a group of college students: the total amount (in dollars) spent on textbooks throughout their college career, and their GPA. The following linear regression model was used to predict GPA from number of dollars (in hundreds) spent:
+
+Predicted GPA = 2.84 + .04*Dollars
+
+problem
+1/1 point (graded)
+3a. What is the predicted GPA of a student who spent a total of $970 on textbooks in college? (Round to 2 decimal places.)
+
+
+3.23
+correct
+3.23 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+3b. If a student spent $0 on textbooks in college and graduated with a GPA of 3.71, what is her residual? (Round to 2 decimal places.)
+
+
+0.87
+correct
+0.87 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+3c. If a student spent $1,450 on textbooks and graduated with a GPA of 2.91, what is his residual? (Please indicate whether the residual is positive or negative in your response, and round to 2 decimal places.)
+
+
+-0.51
+correct
+−0.51 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+0 points possible (ungraded)
+This question is worth zero points. It does not count towards your grade.
+3d. A freshman learned of this study and calculated that she would need to spend $2,900 on textbooks to earn a 4.0 GPA. (You can confirm this calculation using the equation above). She decided to buy all of her textbooks new (rather than second-hand and cheaper) to help boost her GPA. Is she using the model in a statistically-sound way?
+
+
+Yes incorrect
+No correct
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
