@@ -1,0 +1,897 @@
+---
+title: "Week3"
+author: "Sarfaraz Ahmed"
+date: "July 27, 2017"
+output: html_document
+---
+
+
+
+# Pre-Lab 3: Post Student-Survey Data
+![](https://d37djvu3ytnwxt.cloudfront.net/assets/courseware/v1/7ad6d99716a958ec78982194cb6704e4/asset-v1:UTAustinX+UT.7.21x+2T2017+type@asset+block/student.jpg)
+Students at The University of Texas at Austin answered a set of questions for us at the beginning of the semester and then again at the end.  We'll use this data to compare different groups, and to explore what has (or has not) changed over time for these students. (Please note that in the United States, the labels of "freshmen," "sophomore," "junior," and "senior" designate whether a student at a four-year university or college is in their first, second, third, or fourth year respectively.)  
+
+Primary Research Questions
+
+1.  Who is happier at the beginning of the semester:  under-classmen or upper-classmen?
+2.  Does student happiness change from the beginning of the semester to the end?
+
+problem
+3 points possible (graded)
+Check the Data
+
+Let's begin by examining our data in R.
+
+1. Open RStudio. Make sure you've installed the SDSFoundations package.
+2. Type library(SDSFoundations). This will automatically load the data for the labs. 
+3.Type post <- PostSurvey. This will assign the data to your Workspace. 
+4. Look at the spreadsheet view of the data to answer the following questions.
+
+Alternatively, you can follow the steps in the "Importing a Data Frame" R tutorial video, and use the PostSurvey.csv file. (Right-click and "Save As.") Make sure to name the dataframe "post" when importing.
+
+1. Open RStudio.
+2. Click on the "Import Dataset" button at the top of the workspace window. Choose "from text file."
+3. Click on the location of the PostSurvey.csv file you just downloaded.
+4. Click on the PostSurvey.csv file. Then, click Upload.
+5. Look at the spreadsheet view of the data to answer the following questions.
+```{r}
+library(SDSFoundations)
+
+post <- PostSurvey
+```
+1a. How many students are in the dataset?
+
+
+214
+correct214
+214 
+1b. What is the classification of the first male student? (Make sure your spelling matches the variable outcome as spelled in the dataframe.)
+
+
+Sophomore
+incorrectFreshman
+1c. Of the first 10 students in the dataset, what percentage live on campus? (Report without the "%" sign.)
+
+
+50
+correct50
+50 
+Click here for a video explanation of how to answer this question.
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Answers are displayed within the problem Review
+problem
+6/6 points (graded)
+Check the Variables of Interest
+
+Let's find the variables we need to answer the question.
+
+2a. Which variable tells us whether a student is a lower-classman (freshman or sophomore)?
+
+The variable name in the dataset is  correctclassification , which is a  correctcategorical variable.
+
+2b. Which variable tells us how happy students were at the beginning of the semester?
+
+The variable name in the dataset is  correcthappy , which is a  correctquantitative variable.
+
+2c. Which variable tells us how happy students were at the end of the semester?
+
+The variable name in the dataset is  correctpost_happy , which is a  correctquantitative variable.
+Click here for a video explanation of how to answer this question.
+ Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Answers are displayed within the problem Review
+problem
+2/2 points (graded)
+Reflect on the Method
+
+Which method should we be using for this analysis and why?
+
+3a. We will use an independent t-test to help us compare the happiness of the under and upper-classmen. Why?
+
+
+We are comparing two means, so it must be an independent t-test.
+We want to see the change in happiness as students go from freshman to senior year.
+We want to determine if there is any kind of relationship between lower and upperclassmen.
+We want to compare the happiness of two different populations of students. correct
+3b. We will use a dependent t-test to help us determine whether happiness levels changed over the semester. Why?
+
+
+We want to see the change in happiness as students go from freshman to senior year.
+We are looking for a change over time for the same group of students. correct
+We want to determine if happiness is dependent on what month of the year it is.
+We are looking at a difference between means, so it must be a dependent t-test.
+
+
+ Course   Week 3: Hypothesis Testing (Two Group Means)   Pre-Lab   Prepare for the Analysis
+ Previous
+
+problem Examine the Data 
+
+video Unit 
+
+problem Prepare for the Analysis 
+
+video Unit 
+
+problem Conduct the Analysis 
+
+video Unit 
+
+problem Draw Conclusions 
+
+video Unit Next 
+Prepare for the Analysis
+ Bookmark this page
+
+
+Primary Research Questions
+
+1.  Who is happier at the beginning of the semester:  under-classmen or upper-classmen?
+2.  Does student happiness change from the beginning of the semester to the end?
+
+Breakdown Your Analysis
+
+Let's break this analysis into its required steps:
+
+Question 1:  Independent t-test
+1. Make a vector of happiness scores for each sample (under- and upper-classmen).
+2. Generate histograms to check the Normality assumption. 
+3. Run an independent t-test.
+4. Interpret the results.
+
+Question 2:  Dependent t-test
+1. Make a vector of difference scores for student happiness from the beginning to the end of semester.
+2. Generate a histogram of the difference scores to check the Normality assumption.
+3. Run a dependent t-test.
+4. Interpret the results.
+
+Here is the code you will use:
+
+Lab Question 1
+```{r}
+# Make a vector of happiness scores for each sample
+underclass_happy <- post$happy[post$classification=='Freshman'|post$classification=='Sophomore']
+upperclass_happy <- post$happy[post$classification=='Junior'|post$classification=='Senior']
+
+# Check the normality assumption
+hist(underclass_happy, xlab='Underclassman Happiness', main='Percent of Time Happy')
+hist(upperclass_happy, xlab='Upperclassman Happiness', main='Percent of Time Happy')
+
+# Run independent t-test
+t.test(underclass_happy, upperclass_happy)
+```
+
+#Lab Question 2
+```{r}
+# Make a vector of difference scores
+post$diff_happy <- post$happy - post$post_happy
+
+# Check the normality assumption
+hist(post$diff_happy, xlab= 'Difference in Happiness over the Semester', main = 'Happy-Post Happy')
+
+# Run dependent t-test
+t.test(post$happy, post$post_happy, paired=T)
+```
+
+problem
+1/1 point (graded)
+1. Which classifications of students are considered upperclassmen, according to the code above?
+
+
+seniors only
+juniors and seniors correct
+sophomores, juniors and seniors
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+2. How many sample means are being compared in the t-test for Lab Question 1?
+
+
+three
+two correct
+one
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+3. What does this line of code do?
+`post$diff_happy <- post$happy - post$post_happy`
+
+
+Calculates how happy each student was at the end of the semester
+Creates a new variable for each student in the dataset correct
+Finds the average difference in happiness for all students in the dataset
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+4. A student was happy 75% of the time at the beginning of the semester and 90% at the end of the semester. What will be the value of `post$diff_happy` for this student?
+
+
+0
+-15 correct
++15
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+Suppose we wanted to test the happiness scores of those who live on campus against those who live off campus. What has caused the error below?
+```
+post <- PostSurvey
+on_campus <- post[post$live_campus == 'yes',]
+off_campus <- post[post$live_campus == 'no',]
+on_campus_happy <- on_campus$happy
+off_campus_happy <- off_campus$happy
+t.test(on_campus_happy, off_campus_happy, paired = T)
+```
+
+Error in complete.cases(x, y) : not all arguments have the same length
+We ran the wrong type of test. correct
+We told R to look in the wrong dataset for the "happy" variable.
+We did not specify the value of mu.
+The responses for the "live_campus" variable have "Y" and "N" as responses, not "yes" and "no".
+Submit
+
+
+Primary Research Quesitons
+
+1.  Who is happier at the beginning of the semester:  under-classmen or upper-classmen?
+2.   Does student happiness change from the beginning of the semester to the end?
+
+Conduct the Analysis in R
+
+1. Type or copy the script from the the Prepare for the Analysis section into the Script window of R.
+2. Select the portion of the code you wish to run, then press "ctrl+ enter." 
+3. Output can be found in the Console window.
+Lab Question 1
+```{r}
+# Make a vector of happiness scores for each sample
+underclass_happy <- post$happy[post$classification=='Freshman'|post$classification=='Sophomore']
+upperclass_happy <- post$happy[post$classification=='Junior'|post$classification=='Senior']
+
+
+# Check the normality assumption
+hist(underclass_happy, xlab='Underclassman Happiness', main='Percent of Time Happy')
+hist(upperclass_happy, xlab='Upperclassman Happiness', main='Percent of Time Happy')
+
+# Run independent t-test
+t.test(underclass_happy, upperclass_happy)
+```
+
+#Lab Question 2
+```{r}
+# Make a vector of difference scores
+post$diff_happy <- post$happy - post$post_happy
+
+# Check the normality assumption
+hist(post$diff_happy, xlab= 'Difference in Happiness over the Semester', main = 'Happy-Post Happy')
+
+# Run dependent t-test
+t.test(post$happy, post$post_happy, paired=T)
+```
+
+problem
+5/5 points (graded)
+Pre-Lab Question 1
+
+At the beginning of the semester:
+
+1a. What percent of the time, on average, were underclassmen happy? (round to one decimal place)
+
+
+79.7
+correct
+79.7 
+1b. What percent of the time, on average, were upperclassmen happy? (round to one decimal place)
+
+
+78.3
+correct
+78.3 
+
+Report test results, rounded to 3 decimal places:
+
+1c. t-statistic=
+
+
+0.423
+correct
+0.423 
+1d. p-value=
+
+
+0.675
+correct
+0.675 
+1e. We should
+
+correct the null hypothesis that there is no difference in happiness between under- and upper-classmen at the beginning of the semester.
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (5/5 points) Review
+problem
+4/5 points (graded)
+Pre-Lab Question 2
+
+2a. How many students were in this analysis?
+
+
+214
+correct214
+214 
+2b. The average change in happiness was 1.27%. Was this an increase or decrease over the semester?
+
+
+increase
+incorrectDecrease
+
+Report test results, rounded to 3 decimal places:
+
+2c. t-statistic=
+
+
+1.684
+correct1.684
+1.684 
+2d. p-value=
+
+
+0.094
+correct0.094
+0.094 
+2e. We should
+
+correctfail to reject the null hypothesis that there is no change in happiness over the semester.
+Click here for a video explanation of how to answer this question.
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Answers are displayed within the problem Review
+problem
+3/3 points (graded)
+What were the shapes of these distributions?
+
+
+Pre-Lab Question 1
+
+3a. The distribution of underclassmen happiness was ________.
+
+correctleft-skewed
+3b. The distribution of upperclassmen happiness was ________.
+
+correctleft-skewed
+
+Pre-Lab Quesiton 2
+
+3c. The distribution of happiness difference scores was ________.
+
+correctnearly Normal but with a slight positive skew
+
+
+problem
+7/7 points (graded)
+Write Your Conclusion
+
+Answer the question and support your answer with statistics:
+
+The average happiness scores for under-classmen (79.7%) and upper-classmen (78.3%)  correctwere not found to be significantly different (t=  correct0.423 , p = 0.675). The distribution of scores for each group were  correctnegatively skewed. However, the sample sizes were both sufficiently large to meet the assumption for Normality. Over the semester, student happiness correctdecreased by an average of 1.27%. This  correctwas not a statistically significant change (t= correct1.684 p=.094). Overall, there  correctdoes not appear to be any significant difference in levels of student happiness based on their year in college, or the time of the semester.
+
+
+
+# Lab 3: Post Student-Survey Data
+![](https://d37djvu3ytnwxt.cloudfront.net/assets/courseware/v1/7ad6d99716a958ec78982194cb6704e4/asset-v1:UTAustinX+UT.7.21x+2T2017+type@asset+block/student.jpg)
+Students at The University of Texas at Austin answered a set of questions for us at the beginning of the semester and then again at the end.  We'll use this data to compare different groups, and to explore what has (or has not) changed over time for these students. Please note that in the United States, college and university students may choose to participate in social clubs called "sororities" and "fraternities." These social clubs are known as "Greek" clubs.
+
+
+
+problem
+2/2 points (graded)
+Review of Two-Sample t-Tests
+
+In this lab, you will use two-sample t-tests to answer a question of interest. Let's start by remembering why we use these hypothesis tests.
+
+Two samples are considered dependent when:
+
+
+each score in one sample is paired with a specific score in the other sample. correct
+the variables of interest are both measures of time.
+we expect the difference to be statistically significant.
+the subjects have not been randomly assigned.
+Two samples are considered independent when:
+
+
+there is no statistically significant difference between the means of both samples.
+the scores are recorded without measurement error.
+the scores of one sample do not affect the scores of the other sample. correct
+the subjects are being measured on variables that are time-dependent.
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (2/2 points) Review
+problem
+2/2 points (graded)
+Lab Preparation
+
+In this lab you will be working with data from the UT Post Student Survey.
+
+1. Open RStudio. Make sure you've installed the SDSFoundations package.
+2. Type library(SDSFoundations). This will automatically load the data for the labs. 
+3.Type post <- PostSurvey. This will assign the data to your Workspace.
+
+Alternatively, you can follow the steps in the "Importing a Data Frame" R tutorial video, and use the PostSurvey.csv file. (Right-click and "Save As.") Make sure to name the dataframe "post" when importing.
+
+1. Open RStudio.
+2. Click on "Import Dataset" button at the top of the workspace window. Choose "from text file."
+3. Click on the location of the PostSurvey.csv file you just downloaded.
+4. Click on the PostSurvey.csv file. Then, click Upload.
+
+Feel free to use the script from the week's PreLab, which you can modify for use in this Lab.
+
+We will be answering each of the following questions in lab. Match each question to the type of t-test needed to run the analysis.
+
+Question 1: Do students at UT spend more time on homework per week in college than they did in high school?
+
+correctdependent t-test
+Question 2: Do students in fraternities and sororities get less sleep on the weekends than other college students?
+
+correctindependent t-test
+Submit
+
+
+Primary Research Questions
+
+1. Do students at UT spend more time on homework per week in college than they did in high school?
+2. Do students in fraternities and sororities get less sleep on the weekends than other college students?
+
+Analysis
+
+Let’s break this question down into the different statistics that you will need to construct your answer.  Be sure that your R output includes all of the following components. 
+
+For each hypothesis test, 
+
+1. Create vectors of the scores that you wish to analyze.
+2. Check the assumption of normality by generating a histogram for each variable of interest. 
+3. Find the t-statistic and p-value.
+4. Interpret the results of each test. 
+
+
+NOTE:  If you are running directional hypotheses tests, remember that you must modify the code to reflect this direction.
+A one-sided test looks like this:   
+
+`t.test(Variable1, Variable2, alternative = 'less'), when you expect Mean1 < Mean2`
+`t.test(Variable1, Variable2, alternative = 'greater'), when you expect Mean1 > Mean2`
+```{r}
+post$diff_hw <- post$hw_hours_college - post$hw_hours_HS
+hist(post$diff_hw)
+mean(post$diff_hw)
+
+t.test(post$diff_hw)
+#t.test(post$hw_hours_college, post$hw_hours_HS, alternative = 'greater')
+```
+problem
+3/5 points (graded)
+Lab Question 1
+
+1a. On average, students spent how many hours more on homework each week in college than they did in high school? (round to 2 decimal)
+
+
+10.95
+correct
+10.95 
+1b. What was the t-statistic for this test? (Round to 2 decimal places. Depending on how you solved this problem, your answer will be either negative or positive. Please report as a positive or absolute value.)
+
+
+11.375
+incorrect
+11.375 
+1c. How many degrees of freedom? (no decimal places)
+
+
+409
+incorrect
+409 
+1d. What was the p-value?
+
+correct
+1e. Based on these test results, we would conclude that students ________ spend more time on homework in college than they did in high school.
+
+correct
+
+
+```{r}
+greek <- post[post$greek == 'yes',]
+non_greek <- post[post$greek == 'no',]
+hist(greek$sleep_Sat)
+hist(non_greek$sleep_Sat)
+
+mean(greek$sleep_Sat) - mean(non_greek$sleep_Sat)
+
+t.test(greek$sleep_Sat, non_greek$sleep_Sat, alternative = 'less')
+```
+
+problem
+5/5 points (graded)
+Lab Question 2
+
+2a. On average, students who are Greek sleep how many hours less than Non-Greek students on Saturday nights? (report to 1 decimal place)
+
+
+0.3
+correct
+0.3 
+2b. What is the t-statistic for this test? (Report to 3 decimal places. Depending on how you solved this problem, your answer will be either negative or positive. Please report as a positive or absolute value.
+
+
+0.98
+correct
+0.98 
+2c. How many degrees of freedom? (round to no decimal places)
+
+
+63
+correct
+63 
+2d. What was the p-value? (report to 3 decimal places)
+
+
+0.165
+correct
+0.165 
+2e. Based on these results, we would conclude that people who are in fraternities or sororities ________ get less sleep on the weekends than other college students.
+
+correct
+Submit
+
+problem
+1/1 point (graded)
+3. The Normality assumption  correct met in each hypothesis test.
+
+problem
+8/8 points (graded)
+Write Your Conclusion
+
+Answer the question and support your answer with statistics:
+
+The average amount of diﬀerence in the time that UT students spent on homework in high school versus college was found to be  correctapproximately normal . The diﬀerence showed that, in college, students spend correct10.95 hours more on homework per week than in high school. This diﬀerence is signiﬁcant (t(213)= correct16.81 , p<.0.05).
+
+The distributions for the amount of sleep for students in either fraternities and sororities and other students are both correctapproximately normal There correctwas not a signiﬁcant diﬀerence between in amount of Saturday night sleep for the students who are in the Greek system (mean=7.73) and those who are not (mean=8.04), with a t-statistic of  correct-0.981 ( correctdegrees of freedom =62.95) and a p-value of correct0.1652 .
+
+## Problem Set
+
+Question 1
+
+Is the increase in time spent studying from high school to college the same for nursing majors and biology majors?  
+
+1. Create a new variable that equals the difference in hours spent studying per week in college versus high school for each student. 
+
+2. Create two vectors of those differences, one for nursing majors and one for biology majors.
+
+3. Use this data to answer the following questions.  
+
+Use the "PostSurvey.csv" dataset to answer the following questions.  Instructions for installing "PostSurvey.csv" can be found under the Examine the Data unit in this week's Pre-Lab section.
+```{r}
+post_nursing <- post[post$major == 'Nursing', ]
+post_biology <- post[post$major == 'Biology', ]
+
+hist(post_nursing$diff_hw)
+hist(post_biology$diff_hw)
+
+t.test(post_nursing$diff_hw, post_biology$diff_hw)
+```
+
+problem
+1/1 point (graded)
+1a. Which of the following methods should be used to answer the question above?
+
+
+Single-sample independent t-test
+Two-sample independent t-test correct
+Paired samples t-test
+Single sample z-test
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+1b. Create a histogram to confirm the normality assumption for each sample. Has the normality assumption been met?
+
+
+Yes correct
+No
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+1c. Run the appropriate t-test for this analysis. What is the t-statistic? (Report as a positive number rounded 2 decimal places.)
+
+
+0.62
+correct
+0.62 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+1d. How many degrees of freedom are there for this test? (Round to 2 decimal places.)
+
+
+30.89
+correct
+30.89 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+1e. What is the p-value for this test? (Round to 2 decimal places.)
+
+
+0.54
+correct
+0.54 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+1f. Which of the following is an appropriate conclusion for this analysis (assuming α = .05)?
+
+
+We reject the null hypothesis; the increase in study time is greater for biology and nursing majors.
+We reject the null hypothesis; the increase in study time is lower for biology and nursing majors.
+We fail to reject the null hypothesis; the increase in study time is the same for biology and nursing majors. correct
+
+
+```{r}
+qt(0.95, 25)
+sqrt((5/sqrt(26))+(6/sqrt(32)))
+6/1.44
+
+```
+
+Question 2
+
+A study was conducted to compare the resting pulse rates of college smokers and non-smokers.  The data for a randomly selected group is summarized in the table below. Pulse rates were normally distributed within each group.
+
+Group	Sample Size (n)	Average Pulse Rate (bpm)	Standard Deviation of Scores
+Smokers	26	80	5
+Non-Smokers	32	74	6
+problem
+0/1 point (graded)
+2a. What is the appropriate method for analyzing this data?
+
+
+Paired T-Test incorrect
+Independent T-Test correct
+Dependent T-Test
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Answers are displayed within the problem Review
+problem
+0/1 point (graded)
+2b. What is the alternative hypothesis for this test if the researchers expect smoking to raise pulse rates?
+
+
+𝜇smokers > 𝜇non-smokers correct
+𝜇smokers< 𝜇non-smokers incorrect
+𝜇smokers = 𝜇non-smokers
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Answers are displayed within the problem Review
+problem
+1/1 point (graded)
+2c. How many degrees of freedom should we use for this test if we are to estimate rather than use a calculator?
+
+
+25
+correct
+25 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+0/1 point (graded)
+2d. What is t-critical, assuming α=0.05? (Round to 3 decimal places. Use your answer to Question 2c to help find the answer.)
+
+
+2.06
+incorrect1.708
+2.06 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Answers are displayed within the problem Review
+problem
+0/1 point (graded)
+2e. Calculate the standard error. (Round to 2 decimal places.)
+
+
+0.62
+incorrect1.44
+0.62 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Answers are displayed within the problem Review
+problem
+1/1 point (graded)
+2f. Calculate the test statistic. (Round to 2 decimal places, and use rounded values from previous answers.)
+
+
+4.17
+correct
+ 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+2g. Is there evidence to suggest that the pulse rate of smokers is higher on average than the pulse rate of non-smokers?
+
+
+Yes correct
+No
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+2g. How would the p-value be reported in your conclusion?
+
+
+p < 0.05 correct
+p > 0.05
+
+```{r}
+CP_Num <- 1:16
+CP_Left <- c(16.3, 4.8, 10.7, 14, 15.7, 9.9, 29.3, 20.4, 15.7, 7.6, 16.2, 14.7, 15, 8.4, 23.3, 17.7)
+CP_Right <- c(11.5, 3.5, 12.8, 7.9, 15.2, 9.8, 24, 14.9, 12.6, 8.2, 8.4, 11, 12.5, 9.2, 17.5, 11.1)
+CP <- data.frame(CP_Num, CP_Left, CP_Right)
+CP
+mean(CP$CP_Left) - mean(CP$CP_Right)
+sd(CP$CP_Left)
+CP$Diff <- CP$CP_Left - CP$CP_Right
+
+sd(CP$Diff)
+t.test(CP$Diff)
+qt(0.95, 15)
+
+```
+
+
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Answers are displayed within the problem Review
+Assume the researchers calculated the difference scores as d = CPleft - CPright.
+
+They set α = 0.05. 
+
+problem
+1/1 point (graded)
+3b. How many degrees of freedom are there?
+
+
+15
+correct
+\(\) 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+3c. What is the t-critical value? (Round to 3 decimal places.)
+
+
+1.753
+correct
+\(\) 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+3d. How much of a difference in creatine phosphate was observed, on average, between the left and right nerve cells? (Report as a positive value rounded 1 decimal place).
+
+
+3.1
+correct
+\(\) 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+3e. What is the Standard Deviation of the difference scores? (Round to 2 decimal places.)
+
+
+3.05
+correct
+\(\) 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+3f. What is the Standard Error for your t-test? (Round to 2 decimal places.)
+
+
+0.76
+correct
+\(\) 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+3g. What is your test statistic? (Round to 2 decimal places.)
+
+
+4.06
+correct
+\(\) 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+3h. Is there sufficient evidence to suggest that the levels of creatine phosphate are higher in regenerating cells than they are in the normal (control) cells?
+
+
+Yes correct
+No
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+3i. The researchers finish their analysis by calculating a 95% confidence interval for the true increase in CP levels in rejuvenating nerve cells. What are the lower and upper bounds? (Round each to 1 decimal place.)
+
+Lower bound
+
+1.5
+correct
+\(\) 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+Upper bound(Round to 1 decimal place.)
+
+4.7
+correct
+\(\) 
