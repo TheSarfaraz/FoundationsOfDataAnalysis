@@ -1,0 +1,1192 @@
+---
+title: "Week5"
+author: "Sarfaraz Ahmed"
+date: "August 3, 2017"
+output: html_document
+---
+
+
+# Pre-Lab 5: Top Grossing Films
+![Films](https://d37djvu3ytnwxt.cloudfront.net/assets/courseware/v1/8b9323561dbe43a1245e396b3f3ed322/asset-v1:UTAustinX+UT.7.21x+2T2017+type@asset+block/mr._jones.jpg)
+Like most Americans, people in Austin are fascinated with cinema.  The American film industry has captured the attention of audiences around the world, making film a multibillion-dollar-a-year industry.  Most of the top-grossing films of all times have been produced by the same five major studios:  20th-Century Fox, Paramount, Sony Pictures, Universal Pictures and Warner Bros.  This data set focuses on the 151 films made by these studios that made the list of the 245 top-grossing films of all times, as determined by source Box Office Mojo.  For each of the films, data includes film genre, MPAA rating, measures of film critic and user rankings, and production outcomes such as budget, time in theaters and amount grossed.
+
+
+Primary Research Questions
+
+1. Does a film’s rating (PG, PG-13, or R) impact its cost to produce?
+2. Does a film’s rating (PG, PG-13, or R) influence its IMDB score?
+
+problem
+3 points possible (graded)
+Check the Data
+
+Let's begin by examining our data in R.
+
+1. Open RStudio. Make sure you've installed the SDSFoundations package.
+2. Type library(SDSFoundations). This will automatically load the data for the labs. 
+3.Type film <- FilmData. This will assign the data to your Workspace.
+4. Look at the spreadsheet view of the data to answer the following questions.
+
+Alternatively, you can follow the steps in the "Importing a Data Frame" R tutorial video, and use the FilmData.csv file. (Right-click and "Save As.") Make sure to name the dataframe "film" when importing.
+
+1. Open RStudio.
+2. Click on the "Import Dataset" button at the top of the workspace window. Choose "from text file."
+3. Click on the location of the FilmData.csv file you just downloaded.
+4. Click on the FilmData.csv file. Then, click Upload.
+5. Look at the spreadsheet view of the data to answer the following questions.
+```{r}
+library(SDSFoundations)
+
+film <- FilmData
+```
+
+1a. What numerical rank does Titanic hold among highest-grossing films?
+
+
+2
+correct2
+2 
+1b. What is the name of the highest ranked film made by Universal Studios? Double-check your spelling before you submit.
+
+
+Jurassic Park
+correctJurassic Park
+1c. What was the lowest IMDB rating given to a film that ranked in the top 10 grossing films of all time?
+
+
+6.5
+incorrect7.6
+6.5 
+Click here for a video explanation of how to answer this question.
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Answers are displayed within the problem Review
+problem
+6/6 points (graded)
+Check the Variables of Interest
+
+2a. Which variable tells us whether a film is rated PG, PG-13 or R?
+
+The variable name in the dataset is  correctRating , which is a  correctcategorical variable.
+
+2b. Which variable tells us the average score the film received on IMDB?
+
+The variable name in the dataset is  correctIMDB , which is a  correctquantitative variable.
+
+2c. Which variable tells us how much it cost to produce the film?
+
+The variable name in the dataset is  correctBudget , which is a  correctquantitative variable.
+Click here for a video explanation of how to answer this question.
+ Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Answers are displayed within the problem Review
+problem
+2/2 points (graded)
+Reflect on the Method
+
+Which method should we be using for this analysis and why?
+
+3a. We will use ANOVA to help us answer each of these questions. Why?
+
+
+We want to determine if the category to which a film belongs has an impact on some other quantitative measure. correct
+We believe the difference in scores given by film critics and IMDB users is significant.
+We cannot compare the means of these groups using any other method because the groups are related.
+3b. We will conduct post-hoc tests, specifically Tukey’s HSD, if the result of either ANOVA is significant. Why?
+
+
+We want to confirm that the assumptions of ANOVA have been met.
+We want to locate which group means are different from each other. correct
+We want to determine the average score for each category.
+
+
+Primary Research Questions
+
+1. Does a film’s rating (PG, PG-13, or R) impact its cost to produce?
+2. Does a film’s rating (PG, PG-13, or R) influence its IMDB score?
+
+Breakdown Your Analysis
+
+Let's break this analysis into its required steps:
+
+For each ANOVA:
+
+1. Identify the number of films in each rating group (PG, PG-13, R). 
+2. Compute the mean and standard deviation of the variable of interest for each group.
+3. Create boxplots to help visualize group differences and check test assumptions.
+4. Run ANOVA.
+5. If the F statistic is significant, run a Tukey HSD test to determine which groups are different.
+
+Here is the code you will use:
+```{r}
+# Show how many films are in each group
+table(film$Rating)
+```
+
+Question 1
+```{r}
+# Calculate avg film budget of each group
+aggregate(Budget~Rating,film,mean)
+
+# Calculate sd of film budget within each group
+aggregate(Budget~Rating,film,sd)
+
+# Visualize the group means and variability
+boxplot(film$Budget~film$Rating, main= "Film Budgets by Rating",
+ylab= "Budget", xlab= "MPAA Rating")
+
+# Run ANOVA
+modelbud <- aov(film$Budget~film$Rating)
+summary(modelbud)
+
+# Run post-hoc test if F statistic is significant
+TukeyHSD(modelbud)
+
+```
+
+Question 2
+```{r}
+# Calculate avg IMDB score of each group
+aggregate(IMDB~Rating,film,mean)
+
+#Calculate sd of IMDB scores within each group
+aggregate(IMDB~Rating,film,sd)
+
+# Visualize the group means and variability
+boxplot(film$IMDB~film$Rating, main= "IMDB Scores by Rating",
+           ylab= "IMDB Score", xlab= "MPAA Rating")
+
+# Run ANOVA
+modelscore <- aov(film$IMDB~film$Rating)
+summary(modelscore)
+
+# Run post-hod text if F statistic is significant
+TukeyHSD(modelscore)
+```
+
+
+problem
+1/1 point (graded)
+1. What does aov stand for?
+
+
+it doesn’t mean anything; it is just an indicator that we want to create a vector of scores
+an open variable
+analysis of variance correct
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+0/1 point (graded)
+2. Which of the following comes closest to what it sounds like to "read aloud" this line of code?
+`aggregate(Budget~Rating,film,mean)`
+
+
+Find the Budget for each Rating group, and then calculate the overall mean for the dataset film. incorrect
+Look across all the Budget cases and then find the mean Rating for each film.
+For all the cases in film, take the variable Budget and, given the Rating group, find the mean correct
+Click here for a video explanation of how to answer this question.
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Answers are displayed within the problem Review
+problem
+1/1 point (graded)
+3. If group differences are present, what should be true about the output of this line of code?
+`aggregate(Budget~Rating,film,mean)`
+
+
+The average budget for each group should be different. correct
+The mean for the each rating group should be about twice as large as the next.
+The average rating should appear about the same for each group.
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+0/1 point (graded)
+4. If we are to satisfy the assumptions of ANOVA, what should be true about the output of this line of code?
+`aggregate(Budget~Rating,film,sd)`
+
+
+The standard deviation of each group’s budget should vary. incorrect
+The largest standard deviation should be no more than twice the smallest standard deviation. correct
+The standard deviation of each group’s ratings must be identical.
+Click here for a video explanation of how to answer this question.
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Answers are displayed within the problem Review
+problem
+1/1 point (graded)
+5. Suppose we wanted to test if each type of Genre had the same level of Ratings. What has caused the error below? (You may want to refer to the dataset in R for help.)
+
+```{r}
+film <- FilmData
+modelRating <- aov(film$Rating~film$Genre)
+```
+
+Warning messages:
+1: In model.response(mf, "numeric") : using type = "numeric" with a factor response will be ignored
+2: In Ops.factor(y, z$residuals) : - not meaningful for factors
+
+
+We should have run a Chi Square Test of Independence. correct
+We cannot store the aov() function information into "modelRating."
+One of the variable names is spelled differently in our dataset.
+We should have run a two-sample t-test.
+
+Primary Research Questions
+
+1. Does a film’s rating (PG, PG-13, or R) impact its cost?
+2. Does a film’s rating (PG, PG-13, or R) influence its IMDB score?
+
+Conduct the Analysis in R
+
+1. Type or copy the script from the Prepare for the Analysis section into the Script window of R.
+2. Select the portion of the code you wish to run, then press "ctrl+ enter." 
+3. Output can be found in the Console window.
+
+```{r}
+# Show how many films are in each group
+table(film$Rating)
+```
+Question 1
+```{r}
+# Calculate avg film budget of each group
+aggregate(Budget~Rating,film,mean)
+
+# Calculate sd of film budget within each group
+aggregate(Budget~Rating,film,sd)
+
+# Visualize the group means and variability
+boxplot(film$Budget~film$Rating, main= "Film Budgets by Rating",
+ylab= "Budget", xlab= "MPAA Rating")
+
+# Run ANOVA
+modelbud <- aov(film$Budget~film$Rating)
+summary(modelbud)
+
+# Run post-hoc test if F statistic is significant
+TukeyHSD(modelbud)
+
+```
+
+Question 2
+```{r}
+# Calculate avg IMDB score of each group
+aggregate(IMDB~Rating,film,mean)
+
+#Calculate sd of IMDB scores within each group
+aggregate(IMDB~Rating,film,sd)
+
+# Visualize the group means and variability
+boxplot(film$IMDB~film$Rating, main= "IMDB Scores by Rating",
+           ylab= "IMDB Score", xlab= "MPAA Rating")
+
+# Run ANOVA
+modelscore <- aov(film$IMDB~film$Rating)
+summary(modelscore)
+
+# Run post-hod text if F statistic is significant
+TukeyHSD(modelscore)
+```
+
+problem
+3/3 points (graded)
+1a. How many PG-rated films are in the dataset?
+
+39
+correct39
+39 
+1b. How many PG-13-rated films are in the dataset?
+
+94
+correct94
+ 
+1c. How many R-rated films are in the dataset
+
+18
+correct18
+ 
+Click here for a video explanation of how to answer this question.
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Answers are displayed within the problem Review
+problem
+7/7 points (graded)
+Research Question 1
+
+2a. What is the average cost, in millions of dollars, to make each type of film? (no decimal places)
+
+PG=
+
+75
+correct75
+\(\) 
+PG-13=
+
+127
+correct127
+\(\) 
+R=
+
+93
+correct93
+\(\) 
+2b. Was the assumption of equal variability met?
+
+correctYes
+ANOVA Results
+
+2c. F-statistic (rounded to one decimal place)=
+
+
+13.1
+correct13.1
+\(\) 
+Tukey Test Results
+
+2d. The average budget for a PG-13 film was significantly higher than the budget for a(n) ________ rated film.
+
+
+PG
+correctPG
+2e. The difference between a PG-13 film and a(n) ________ rated film was almost, but not quite significant, at p = 0.053.
+
+
+R
+correctR
+Click here for a video explanation of how to answer this question.
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Answers are displayed within the problem Review
+problem
+5/5 points (graded)
+Research Question 2
+
+3a. What is the average IMDB score for each type of film? (Round to 1 decimal place)
+
+PG
+
+7.0
+correct7.0
+\(\) 
+PG-13
+
+7.0
+correct7.0
+\(\) 
+R
+
+7.2
+correct7.2
+\(\) 
+ANOVA Results
+
+3b. What is the F statistic, rounded to 1 decimal place?
+
+
+0.3
+correct0.3
+\(\) 
+Tukey Test Results
+
+Was a Tukey test necessary for this analysis?
+correctNo
+
+problem
+7/7 points (graded)
+Write Your Conclusion
+
+Answer the question and support your answer with statistics:
+
+This analysis examined 151 top-grossing films produced by five major studios. The average cost of a film was found to vary depending on its MPAA rating (F=  correct13.1 , p < .05). In a Tukey HSD test,  correctPG-13 films were shown to cost significantly more on average ($127M) than PG films ($  correct75 M). PG-13 films fell just shy of costing significantly more than  correctR rated films (p=.053). The average IMDB score of a film  correctdoes not appear to vary with MPAA rating (F=0.3, p=  correct0.74 ). The average ratings for all three categories of film were close to  correct7 on a scale of 1-10.
+
+
+# Lab 5: Top Grossing Films
+![](https://d37djvu3ytnwxt.cloudfront.net/assets/courseware/v1/8b9323561dbe43a1245e396b3f3ed322/asset-v1:UTAustinX+UT.7.21x+2T2017+type@asset+block/mr._jones.jpg)
+Like most Americans, people in Austin are fascinated with cinema.  The American film industry has captured the attention of audiences around the world, making film a multibillion-dollar-a-year industry.  Most of the top-grossing films of all times have been produced by the same five major studios:  20th-Century Fox, Paramount, Sony Pictures, Universal Pictures and Warner Bros.  This data set focuses on the 151 films made by these studios that made the list of the 245 top-grossing films of all times, as determined by source Box Office Mojo.  For each of the films, data includes film genre, MPAA rating, measures of film critic and user rankings, and production outcomes such as budget, time in theaters and amount grossed.
+
+problem
+1/2 points (graded)
+Review of ANOVA
+
+In this lab, you will use ANOVA to answer a question of interest. Let's start by remembering why we use ANOVA.
+
+1a. What is the goal of an ANOVA analysis?
+
+
+to determine if significant mean differences exist between multiple groups correct
+to identify the distribution of counts across three or more groups
+to compare the variability of scores in two different groups
+1b. Two specific group means can be said to be significantly different if:
+
+
+the F statistic of the overall ANOVA is significant incorrect
+one group mean is at least twice the value of another
+a Tukey HSD pairwise comparison shows p < 0.05 (or the identified level of significance) correct
+ Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Answers are displayed within the problem Review
+problem
+1/1 point (graded)
+Lab Preparation
+
+In this lab you will be working with data from the top grossing films of all time.
+
+1. Open RStudio. Make sure you've installed the SDSFoundations package.
+2. Type library(SDSFoundations). This will automatically load the data for the labs. 
+3.Type film <- FilmData. This will assign the data to your Workspace.
+
+Alternatively, you can use the steps in the "Importing a Data Frame" R tutorial video, and use the FilmData.csv file. (Right-click and "Save As.") Make sure to name the dataframe "film" when importing.
+
+1. Open RStudio.
+2. Click on the "Import Dataset" button at the top of the workspace window. Choose "from text file."
+3. Click on the location of the FilmData.csv file you just downloaded.
+4. Click on the FilmData.csv file. Then, click Upload.
+
+Feel free to use the script from the week's PreLab, which you can modify for use in this Lab.
+
+2. Two of the following questions will be answered in this lab using ANOVA. Select the questions that can be answered with this method.
+
+
+Which studio(s) earn a greater percentage of their earnings domestically?
+Which studio(s) are more successful in keeping their films in the theaters longer?
+Which is a better predictor of how much a film will gross: the film’s budget or how long it was in theaters?
+correct
+
+Primary Research Questions
+
+1. Are some studios more successful in keeping their films in the theaters longer?
+2. Do some studios earn a greater percentage of their earnings domestically than others?
+
+Analysis
+
+Let’s break this question down into the different descriptive statistics that you will need to construct your answer.  Be sure that your R output includes all of the following components. 
+
+For each lab question:
+
+1. Identify the number of films in each studio group.
+2. Find the mean and standard deviation of the variable of interest for each group.
+3. Create boxplots to help visualize group differences and check test assumptions.
+4. Run ANOVA.
+5. If the F statistic is significant, run a Tukey HSD test to determine which groups are different.
+
+```{r}
+# Show how many films are in each group
+table(film$Studio)
+```
+Question 1
+```{r}
+# Calculate avg film budget of each group
+aggregate(Days~Studio,film,mean)
+
+# Calculate sd of film budget within each group
+aggregate(Days~Studio,film,sd)
+
+# Visualize the group means and variability
+boxplot(film$Days~film$Studio, main= "Number of Days by Studio",
+ylab= "Days", xlab= "Studio")
+
+# Run ANOVA
+model_Days <- aov(film$Days~film$Studio)
+summary(model_Days)
+
+# Run post-hoc test if F statistic is significant
+TukeyHSD(model_Days)
+
+```
+
+Question 2
+```{r}
+# Calculate avg IMDB score of each group
+aggregate(Pct.Dom~Studio,film,mean)
+
+#Calculate sd of IMDB scores within each group
+aggregate(Pct.Dom~Studio,film,sd)
+
+# Visualize the group means and variability
+boxplot(film$Pct.Dom~film$Studio, main= "Percentage of Domestic Earning by Studio",
+           ylab= "Percentage of Domestic Earning", xlab= "Studio")
+
+# Run ANOVA
+model_Earnings <- aov(film$Pct.Dom~film$Studio)
+summary(model_Earnings)
+
+# Run post-hod text if F statistic is significant
+TukeyHSD(model_Earnings)
+```
+
+Primary Research Questions
+
+1. Are some studios more successful in keeping their films in the theaters longer?
+2. Do some studios earn a greater percentage of their earnings domestically than others?
+
+Analysis
+
+Let’s break this question down into the different descriptive statistics that you will need to construct your answer.  Be sure that your R output includes all of the following components. 
+
+For each lab question:
+
+1. Identify the number of films in each studio group.
+2. Find the mean and standard deviation of the variable of interest for each group.
+3. Create boxplots to help visualize group differences and check test assumptions.
+4. Run ANOVA.
+5. If the F statistic is significant, run a Tukey HSD test to determine which groups are different.
+
+problem
+5/5 points (graded)
+The number of top-grossing films produced by each studio were:
+
+1a. Fox
+
+41
+correct
+41 
+1b. Paramount
+
+24
+correct
+24 
+1c. Sony Pictures
+
+19
+correct
+19 
+1d. Universal Studios
+
+27
+correct
+27 
+1e. Warner Brothers
+
+40
+correct
+40 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (5/5 points) Review
+problem
+4/4 points (graded)
+Research Question 1
+
+2a. Sony films were in theaters for the shortest period of time. How many days were they in theaters, on average? (round to 1 decimal place)
+
+
+113.7
+correct
+113.7 
+2b. Fox films were in theaters for the longest period of time. How many days were they in theaters, on average? (round to 1 decimal place)
+
+
+154.5
+correct
+154.5 
+ANOVA Results
+
+2c. What was the F statistic for this hypothesis test? (round to 2 decimal places)
+
+
+5.35
+correct
+5.35 
+Tukey Results
+
+2d. We can conclude that _______ films are in theaters longer, on average, than films made by both Sony and Universal.
+
+
+Fox
+correct
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (4/4 points) Review
+problem
+4/4 points (graded)
+Research Question 2
+
+3a. Universal films earned the largest percentage of earnings domestically, with a group mean of _______%. (round to 0 decimal places)
+
+
+44
+correct
+44 
+3b. Sony films earned the smallest percentage of their earnings domestically, with a group mean of _______%. (round to 0 decimal places)
+
+
+36
+correct
+36 
+ANOVA Results
+
+3c. What was the F-statistic for this hypothesis test? (round to 1 decimal place)
+
+
+2.1
+correct
+2.1 
+Tukey Results
+
+3d. How many group means were significantly different from each other?
+
+
+0
+correct
+0 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (4/4 points) Review
+problem
+0/1 point (graded)
+4. Which of the following observations allow you to confirm that the distributions were nearly Normal?
+
+
+The boxplots were not highly skewed. correct
+The standard deviations of each group were essentially equivalent. incorrect
+The films in each group were independent of each other.
+
+
+problem
+10/10 points (graded)
+Write Your Conclusion
+
+Answer the question and support your answer with statistics:
+
+This analysis examined correct151 top-grossing ﬁlms produced by ﬁve major studios. Visual examination of the data through boxplots shows no violation of the approximate equality of correctvariance assumption across the five major studios. Analysis correctrevealed a diﬀerence in the number of days a ﬁlm spent in the theater, by studio (F(4,146)= correct5.354 , p<0.05). In a  correctTukey HSD test,  correctFox films stayed in the theater significantly longer (155 days) than both  correctUniversal (130 days) and Sony Studios (114 days). Sony studios was also significantly lower than  correctWarner Brothers studios (146 days).
+
+An additional analysis  correctdid not reveal a significant difference in the percentage of earnings domestically, across the five different studios (F(4,146)=2.097, p=  correct0.084 .
+
+
+
+## Problem Set
+
+Question 1
+
+Do low-budget movies make a different percentage of their profits domestically than movies with medium- or high-budgets? 
+
+1. Suppose films with a budget less than $100 Million are considered "low-budget"; films with a budget of $100 million up to but not including 150 Million are considered "medium-budget", and those with a budget of $150 million or more are "high-budget."  
+
+2. Create a new categorical variable in the dataset that defines each film under these criteria.
+
+3. Use this data to answer the following questions.
+
+Use the "FilmData.csv" dataset to answer the following questions.  Instructions for installing "FilmData.csv" can be found under the Examine the Data unit in this week's Pre-Lab section.
+```{r}
+film$BudgetCat[film$Budget < 100] <- "Low-Budget"
+film$BudgetCat[film$Budget >= 100 & film$Budget < 150] <- "Medium-Budget"
+film$BudgetCat[film$Budget >= 150] <- "High-Budget"
+
+table(film$BudgetCat)
+
+aggregate(Pct.Dom~BudgetCat, film, mean)
+
+boxplot(film$Pct.Dom~film$BudgetCat, main = "Boxplot for Percentage of Domestic Earnings by the Budget Category",
+        xlab = "Budget Category", ylab = "Domestic Earnings Percentage")
+
+model_BudgetCat <- aov(film$Pct.Dom ~ film$BudgetCat)
+
+summary(model_BudgetCat)
+
+TukeyHSD(model_BudgetCat)
+```
+
+problem
+1/1 point (graded)
+1a. How many films fall into each of the budget categories?
+
+High-Budget Films
+
+42
+correct
+ 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+0/1 point (graded)
+Medium-Budget Films
+
+41
+incorrect41
+ 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+problem
+1/1 point (graded)
+Low-Budget Films
+
+67
+correct
+ 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+1b. Calculate the mean percent domestic for each group and enter them below. (Report answers as percentages rounded to one decimal place.)
+
+High-Budget Films
+
+37.6
+correct
+\(\) 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+Medium-Budget Films
+
+38.6
+correct
+\(\) 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+Low-Budget Films
+
+44.6
+correct
+\(\) 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+Create a boxplot to check the assumptions of ANOVA.  Then run an ANOVA and report your findings below.
+
+problem
+1/1 point (graded)
+1c. What is the F-statistic for this test? (Round to 1 decimal place.)
+
+
+7.6
+correct
+\(\) 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+1d. What are the degrees of freedom?
+
+Numerator Degree of Freedom
+
+2
+correct
+\(\) 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+Denominator Degree of Freedom
+
+147
+correct
+\(\) 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+1e. What is the p-value of the test? (Round to 3 decimal places.)
+
+
+0.001
+correct
+\(\) 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+1f. What is the appropriate conclusion for this test?
+
+
+The mean percent gross earned domestically is equal across all budget groups.
+The mean percent gross earned domestically is NOT equal across all budget groups. correct
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+1g. Run a Tukey HSD post-hoc analysis and chose the correct adjusted p-values for each pairwise comparison listed below.
+
+Low vs. High
+
+correct
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+Low vs. Medium
+
+correct
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+0/1 point (graded)
+Medium vs. High
+
+incorrect0.898
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Answers are displayed within the problem Review
+problem
+1/1 point (graded)
+1h. What is the appropriate conclusion for the post-hoc analysis?
+
+
+Both low-budget and medium-budget films earn a greater percentage of their profit domestically than high-budget films.
+High-budget films earn a greater percentage of their profit domestically than either low-budget or high-budget films.
+Medium-budget films earn the most percentage of their profit domestically.
+Low-budget films earn a greater percentage of their profit domestically than either medium-budget or high-budget films. correct
+
+Question 2
+
+Forty-five (45) dog lovers are recruited for a study examining the calming effects of pets during stressful situations. 
+
+Fifteen (15) subjects were randomly assigned to each of three different groups: 
+
+- performing the task alone (control),
+
+- performing the task with a good friend present, and
+
+- performing the task with their dog present. 
+
+The peak heart rate (in beats per minute) during the task was measured for each subject, with the following results:
+
+Alone	Good Friend	Pet Dog
+Mean	82.52	91.32	73.48
+SD	9.24	8.34	9.97
+
+problem
+1/1 point (graded)
+2a. What is the appropriate null hypothesis for this test?
+
+
+H0:μ1=μ2=μ3 correct
+H0:μ1≠μ2≠μ3
+H0:μ1≠μ2=μ3
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+2b. To run a reliable ANOVA, what must be true of this data?
+
+
+The heart rate data should be normally distributed in each group.
+Each group should have approximately equal standard deviations.
+Each group has independent, random data.
+All of the above. correct
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+2c. What are the degrees of freedom for this test?
+
+Numerator Degree of Freedom
+
+2
+correct
+2 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+Denominator Degree of Freedom
+
+42
+correct
+42 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+2d. What is the critical F for this test, assuming α= 0.05? (Round to 2 decimal places.)
+
+
+3.22
+correct
+3.22 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+0/1 point (graded)
+2e. In this problem, you find that SStotal = 5949.1 and SSBetween = 2387.7. What is the F statistic for the test? (Round to 2 decimal places.)
+
+
+52.41
+incorrect14.08
+52.41 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Answers are displayed within the problem Review
+problem
+1/1 point (graded)
+2f. What is the outcome of this test?
+
+
+Fail to reject the null hypothesis
+Reject the null hypothesis correct
+
+Question 3
+
+A local police department has divided the city into three sections, and each is patrolled by a different set of six (6) officers.  The police chief wants to determine if officers are biased in the number of disorderly conduct tickets that they give out in each section.
+
+Here are the number of tickets given by the officers in each section in the last week:
+
+Section 1	Section 2	Section 3
+8	3	1
+4	7	2
+6	0	7
+8	2	6
+6	7	5
+4	5	0
+```{r}
+Q3 <- data.frame(Tickets = c(8, 4, 6, 8, 6, 4, 3, 7, 0, 2, 7, 5, 1, 2, 7, 6, 5, 0), Section = c(rep("Section1", 6), rep("Section2", 6), rep("Section3", 6)))
+Q3
+model_Q3 <- aov(Q3$Tickets~Q3$Section)
+summary(model_Q3)
+```
+
+problem
+1/1 point (graded)
+3a. Which of the following is the alternative hypothesis for this test?
+
+
+HA: Police officers in at least one section of the city give out a different number of ￼tickets on average. correct
+HA: Police officers in at least two sections of the city give out a different number of ￼tickets on average than the third.
+HA: The average number of tickets handed out are equal across the three sections of the city.
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+3b. What are the degrees of freedom for this problem?
+
+Numerator Degree of Freedom
+
+2
+correct
+2 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+Denominator Degree of Freedom
+
+15
+correct
+15 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+0/1 point (graded)
+3c. What is SSTotal for this problem? (Round to 1 decimal place.)
+
+
+21.0
+incorrect118.5
+21.0 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Answers are displayed within the problem Review
+problem
+0/1 point (graded)
+3d. What is MSBetween for this problem? (Round to 1 decimal place.)
+
+
+21.0
+incorrect10.5
+21.0 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Answers are displayed within the problem Review
+problem
+1/1 point (graded)
+3e. What is MSWithin for this problem? (Round to 1 decimal place.)
+
+
+6.5
+correct
+6.5 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+3f. What is the F statistic for this test? (Round to 3 decimal places.)
+
+
+1.615
+correct
+\(\) 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+3g. What is the appropriate conclusion for this test?
+
+
+Because our Null Hypothesis is Rejected, there is evidence to suggest that police officers are giving out a different number of tickets in these three sections, on average.
+There is NO evidence to suggest that police officers are giving out a different number of tickets in these three sections, on average. correct
+Police officers in at least two sections of the city are giving out a different number of ￼tickets on average than the third.
+
+
+Question 4
+
+Below is the source table for a study on sleep aids, comparing the effectiveness of three (3) different treatments.  Note that some of the elements of the table are missing. 
+
+SS	df	MS	F
+Between Treatments	782.00			
+Within Treatments		34		
+Total	2,147.00			
+problem
+1/1 point (graded)
+4a. What is SSWithin ?
+
+
+1365
+correct
+\(\) 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+4b. What is dfTotal ?
+
+
+36
+correct
+\(\) 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+4c. What is MSWithin ? (Round to 2 decimal places.)
+
+
+40.15
+correct
+\(\) 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+4d. What is the F statistic? (Round to 2 decimal places, and use your rounded answer from 4c.)
+
+
+9.74
+correct
+\(\) 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+4e. Using an F-critical of 3.28, what is the appropriate conclusion of the test?
+
+
+At least one of the sleep aids performs better than the others. correct
+The three sleep aids perform equally well.
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+4f. You decide to perform a post-hoc analysis on these group means using a Bonferroni correction. How many group mean comparisons will you do?
+
+
+3
+correct
+\(\) 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+0/1 point (graded)
+4g. What should be the new significance level for your post-hoc tests, assuming an original α=0.05? (Round to 3 decimal places.)
+
+
+0.143
+incorrect0.017
+\(\) 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Answers are displayed within the problem Review
+4h. Here are the results from your post-hoc analysis. These are the p-values from the actual t-tests. They are not adjusted, so be sure to compare them to the significance level you calculated above.
+
+T-Statistic	P-Value
+Group 1 - Group 2	1.90	0.137
+Group 1 - Group 3	3.79	0.004
+Group 2 - Group 3	3.44	0.028
+ 
+
+problem
+1/1 point (graded)
+What do you conclude?
+
+
+The Sleep Aid 1 group and Sleep Aid 2 group were significantly different from Sleep Aid 3 group, but not from each other.
+The Sleep Aid 1 group and Sleep Aid 2 group were significantly different from one another.
+The Sleep Aid 1 was significantly different from the Sleep Aid 3 group. correct
+
+
