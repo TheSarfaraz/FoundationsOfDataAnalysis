@@ -1,0 +1,848 @@
+---
+title: "Week6"
+author: "Sarfaraz Ahmed"
+date: "August 7, 2017"
+output: html_document
+---
+
+
+# Pre-lab 6: Medical School Quality of Life
+![](https://d37djvu3ytnwxt.cloudfront.net/assets/courseware/v1/ae424bae893d9fb9c0587b0cd914962d/asset-v1:UTAustinX+UT.7.21x+2T2017+type@asset+block/med_school.jpg)
+
+In a 2015 study, Tempski and associates examined a measurement they called Quality of Life among medical school students in Brazilian medical schools. They borrowed measurement scales from the World Health Organization, the Dundee Ready Education Environment Scale, and the Beck Depression Inventory to assess the dependent variable in potential relation to a number of predictor variables.
+
+Primary research questions
+
+1) Can you confirm the claim that Beck Depression Inventory score is a significant predictor of Overall Quality of Life among students enrolled in the Clinical Sciences program?
+
+2) For students enrolled in the Clinical Sciences program, examine the effects of DREEM: Social Self Perception, DREEM: Academic Self Perception, Resilience, BDI, and Age on Med School Quality of Life? 
+
+problem
+3 points possible (graded)
+Check the Data
+
+Let's begin by examining our data in R.
+
+1. Open RStudio. Make sure you've installed the SDSFoundations 1.4 package.
+2. Type library(SDSFoundations). This will automatically load the data for the labs. 
+3.Type res <- TempskiResilience. This will assign the data to your Workspace.
+4. Look at the spreadsheet view of the data to answer the following questions.
+
+Alternatively, you can use the following steps in the "Importing a Data Frame" R tutorial video, and use the TempskiResilience.csv file. (Right-click and "Save As.") Make sure to name the dataframe "res" when importing.
+
+1. Open RStudio.
+2. Click on the "Import Dataset" button at the top of the workspace window. Choose "from text file."
+3. Click on the location of the TempskiResilience.csv file you just downloaded.
+4. Click on the TempskiResilience.csv file. Then, click Upload.
+5. Look at the spreadsheet view of the data to answer the following questions.
+```{r}
+library(SDSFoundations)
+
+res <- TempskiResilience
+```
+
+1a. How many observations are in the intial dataset?
+
+
+1350
+correct1350
+1350 
+1b. The first listed student with a Med School Quality of Life score of 10 is how many years old?
+
+
+21
+correct21
+21 
+1c. Of the first 10 participants, how many have a Med School Quality of Life over 5?
+
+
+10
+incorrect7
+10 
+Click here for a video explanation of how to answer this question.
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Answers are displayed within the problem Review
+problem
+4/4 points (graded)
+Check the Variables of Interest
+
+Let's find the variables we need to answer the question.
+
+2a. Which variable tells us the Med School quality of life?
+
+The variable name in the dataset is  correct , which is a  correct variable.
+
+2b. Is there just one predictor variable in the model for the second research question?
+
+correct
+2c. How many variables will be used as predictors in the model for the second research question?
+
+correct
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (4/4 points) Review
+problem
+2/2 points (graded)
+Reflect on the Method
+
+Which method should we be using for this analysis and why?
+
+3a. We will use Multiple Linear Regression to answer our Second Primary Research Question. Why?
+
+
+We want to determine if the category of Med School changes the Quality of Life.
+We want to examine multiple predictors of a single quantitative outcome. correct
+We have just two quantitative variables and want to examine their relationship.
+3b. For both question models, we'll need to examine diagnostic plots. Why?
+
+
+We want to confirm the mean of the outcome variable.
+We need to assess the assumptions of the model, and look for potential outliers. correct
+We want to determine the average variance for each level of Med School Group.
+
+Primary Research Questions
+
+1) Can you confirm the claim that Beck Depression Inventory score is a significant predictor of Overall Quality of Life among students enrolled in the Clinical Sciences program?
+
+2) For students enrolled in the Clinical Sciences program, examine the effects of DREEM: Social Self Perception, DREEM: Academic Self Perception, Resilience, BDI, and Age on Med School Quality of Life?
+
+Breakdown Your Analysis
+
+Let's break this analysis into its required steps:
+
+1. Subset out just students in the Clinical Sciences program.
+2. Run a basic correlation matrix for Research Question 1.
+3. Run the model for Research Question 1 and examine.
+4. Run a basic correlation matrix for Research Question 2.
+5. Run the model for Research Question 2 and examine.
+6. Follow up Research Question 2 with contextual analysis.
+
+Here is the code you will use:
+```{r}
+#Subset into the Clinical Sciences
+clin <- res[res$Group == "Clinical Sciences",]
+```
+Question One
+```{r}
+#Intial Correlations
+vars <- c("QoL", "BDI")
+cor(clin[,vars])
+
+#RQ1 Model
+ov_mod <- lm(QoL ~ BDI, data=clin)
+summary(ov_mod)
+confint(ov_mod)
+
+#Diagnostics
+plot(ov_mod, which=1)
+cutoff <- 4/(ov_mod$df) 
+plot(ov_mod, which=4, cook.levels=cutoff)
+```
+Question Two
+```{r}
+#Initial correlations
+vars <- c("MS.QoL", "DREEM.S.SP", "DREEM.A.SP", "Resilience", "BDI", "Age")
+cor(clin[,vars], use="pairwise.complete.obs")
+
+#Test the initial correlations
+library(psych)
+corr.test(clin[,vars], use="pairwise.complete.obs")
+
+#RQ2 Model
+ms_mod <- lm(MS.QoL ~ DREEM.S.SP + DREEM.A.SP + Resilience + BDI + Age, data=clin)
+summary(ms_mod)
+confint(ms_mod)
+
+#Diagnostics
+library(car)
+vif(ms_mod)
+plot(ms_mod, which=1)
+cutoff <- 4/(ms_mod$df) 
+plot(ms_mod, which=4, cook.levels=cutoff)
+
+#Put model into context
+lmBeta(ms_mod) 
+round(pCorr(ms_mod), 4) 
+```
+
+problem
+1/1 point (graded)
+1. What does the summary() function do?
+provides the output from the linear model in the console correct
+shows the standardized betas of the model
+runs the linear model for the research question
+provides summary statistics for the outcome variable
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+2. What is the purpose of the following code option in cor()?
+
+use="pairwise.complete.obs"
+
+
+It is the option that shows the correlation matrix
+It shows the p-values associated with each correlation
+It allows for all complete data to be used in the correlations correct
+It calls the "pairwise.complete.obs" data set
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+3. What kind of diagnostic plot is provided from the following code?
+
+plot(ov_mod, which=1)
+
+
+A Cook's Distance plot
+A Q-Q plot for normality
+A scatterplot
+A Residuals vs. Fitted plot correct
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+4. What does the function lmBeta() do?
+Provides the partial correlation coefficients for the model
+Provides the semi-partial (part) correlation coefficients for the model
+Provides the Standardized Betas for the model correct
+Runs all diagnostic plots
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+1/1 point (graded)
+5. You want to run a correlation matrix, and then get the p-value for each bivariate correlation. You run the following code. What caused the error? 
+
+vars <- c('MS.QoL', 'DREEM.S.SP', 'DREEM.A.SP', 'Resilience', 'BDI', 'Age') 
+cor.test(clin[,vars], use="pairwise.complete.obs")
+
+Warning messages:
+Error in cor.test.default(clin[, vars], use = "pairwise.complete.obs") : ,
+argument "y" is missing, with no default
+
+
+The function is called corr.test rather than cor.test correct
+A correlation matrix only has two variables, not six.
+The dataset "pairwise.complete.obs" is not provided.
+DREEM.S.SP is not the outcome varaible (y)
+
+
+Primary Research Questions
+
+1) Can you confirm the claim that Beck Depression Inventory score is a significant predictor of Overall Quality of Life among students enrolled in the Clinical Sciences program?
+
+2) For students enrolled in the Clinical Sciences program, examine the effects of DREEM: Social Self Perception, DREEM: Academic Self Perception, Resilience, BDI, and Age on Med School Quality of Life? 
+
+Conduct the Analysis in R
+
+1. Type or copy the script from the Prepare for the Analysis section into the Script window of R.
+2. Select the portion of the code you wish to run, then press "ctrl+ enter." 
+3. Output can be found in the Console window.
+
+```{r}
+#Subset into the Clinical Sciences
+clin <- res[res$Group == "Clinical Sciences",]
+```
+Question One
+```{r}
+#Intial Correlations
+vars <- c("QoL", "BDI")
+cor(clin[,vars])
+
+#RQ1 Model
+ov_mod <- lm(QoL ~ BDI, data=clin)
+summary(ov_mod)
+confint(ov_mod)
+
+#Diagnostics
+plot(ov_mod, which=1)
+cutoff <- 4/(ov_mod$df) 
+plot(ov_mod, which=4, cook.levels=cutoff)
+```
+Question Two
+```{r}
+#Initial correlations
+vars <- c("MS.QoL", "DREEM.S.SP", "DREEM.A.SP", "Resilience", "BDI", "Age")
+cor(clin[,vars], use="pairwise.complete.obs")
+
+#Test the initial correlations
+library(psych)
+corr.test(clin[,vars], use="pairwise.complete.obs")
+
+#RQ2 Model
+ms_mod <- lm(MS.QoL ~ DREEM.S.SP + DREEM.A.SP + Resilience + BDI + Age, data=clin)
+summary(ms_mod)
+confint(ms_mod)
+
+#Diagnostics
+library(car)
+vif(ms_mod)
+plot(ms_mod, which=1)
+cutoff <- 4/(ms_mod$df) 
+plot(ms_mod, which=4, cook.levels=cutoff)
+
+#Put model into context
+lmBeta(ms_mod) 
+round(pCorr(ms_mod), 4) 
+```
+
+problem
+2/2 points (graded)
+Research Question 1:
+
+1a) What is the inital correlation coefficient between overall Quality of Life and Beck Depression Inventory? (Round to three decimal places.)
+
+-0.375
+correct
+−0.375 
+1b) What is the t-value of the Simple Regression slope for Beck Depression Inventory? (Round to three decimal places.)
+
+-8.935
+correct
+−8.935 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (2/2 points) Review
+problem
+3/3 points (graded)
+Research Question 2:
+
+2a) What is the R-squared value for the overall model? (Report as a percentage, and round to 2 decimal places.)
+
+
+33.37
+correct
+33.37 
+2b) What is the Adjusted R-squared for the overall model? (Report as a percentage, and round to 2 decimal places.)
+
+
+32.69
+correct
+32.69 
+2c) What is the F-value for the overall model? (Round to 2 decimal places.)
+
+48.59
+correct
+48.59 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (3/3 points) Review
+problem
+4/4 points (graded)
+Research Question 2:
+
+3a) The Standardized Beta for DREEM Social Self Perception is (Round to three decimal places):
+
+
+0.387
+correct
+ 
+3b) This means that as DREEM Social Self Perception increases by ______ standard deviation(s), the outcome of Med School Quality of Life increases by ______(Round to three decimal places):
+
+
+1
+correct
+ 
+
+0.387
+correct
+ 
+3c) What amount of unique variance can be accounted for in the model by DREEM Social Self Perception? (Report as a percentage and round to two decimal places.)
+
+
+8.23
+correct
+ 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (4/4 points) Review
+problem
+1/1 point (graded)
+Research Question 2:
+
+4) According to the results from the full Multiple Regression Model, what is the best predictor of Med School Quality of Life, among Clinical Science students?
+
+
+BDI
+DREEM Social Self Perception correct
+DREEM Academinc Self Perception
+Resilience
+
+
+Primary Research Questions
+
+1) Can you confirm the claim that Beck Depression Inventory score is a significant predictor of Overall Quality of Life among students enrolled in the Clinical Sciences program?
+
+2) For students enrolled in the Clinical Sciences program, examine the effects of DREEM: Social Self Perception, DREEM: Academic Self Perception, Resilience, BDI, and Age on Med School Quality of Life?
+
+problem
+9/10 points (graded)
+Write Your Conclusion
+
+Answer the question and support your answer with statistics:
+
+To answer our primary research questions about Clinical Sciences med students, we conducted two primary tests: a simple linear regression and a multiple linear regression. First, we investigated the claimed effect of Beck Depression Inventory score on Overall Quality of Life. There was a correctnegative correlation between Beck Depression Inventory score and Overall Quality of Life. The corresponding model showed a  incorrectsignificant simple slope for Beck Depression Inventory (t(489)=  correct-8.935 , p<0.05) indicating that as the Beck Depression Inventory score increases, the Overall Quality of Life score  correctdecreases 
+
+The multiple linear regression examined the impact of DREEM: Social Self Perception, DREEM: Academic Self Perception, Resilience, BDI, and Age on Med School Quality of Life. Overall, the model was  correctsignificant (F(5,485)=  correct48.59 , p<.05), and could account for  correct33.37% of the variance in the outcome (Adjusted R2=  correct32.69% ). The best predictor of Med School Quality of Life was  correctDREEM: Social Self Perception which could account for a unique proportion of variance in the outcome of  correct8.23%.
+
+
+# LAB 6: MEDICAL SCHOOL QUALITY OF LIFE
+![](https://d37djvu3ytnwxt.cloudfront.net/assets/courseware/v1/ae424bae893d9fb9c0587b0cd914962d/asset-v1:UTAustinX+UT.7.21x+2T2017+type@asset+block/med_school.jpg)
+In a 2015 study, Tempski and associates examined a measurement they called Quality of Life among medical school students in Brazilian medical schools. They borrowed measurement scales from the World Health Organization, the Dundee Ready Education Environment Scale, and the Beck Depression Inventory to assess the dependent variable in potential relation to a number of predictor variables.
+
+
+problem
+1/2 points (graded)
+Review of Regression Analysis
+
+In this lab, you will use Regression Analysis to answer a question of interest. Let's start by remembering why we use Multiple Linear Regression Analysis.
+
+1a. In a Multiple Linear Regression model, not only can we compare overall model fit, but for each predictor we can also find the ______.
+
+
+slope and significance correct
+simple regression value
+Pearson Correlation incorrect
+Cook's Distance
+1b. Which measure, asked for after we run our Multiple Linear Regression model, tells us the unique proportion of variance accounted for by each predictor?
+
+
+the multiple R-squared value
+the part (or semi-partial) correlation squared value correct
+the standardized beta values
+the standardized beta values, squared
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Answers are displayed within the problem Review
+problem
+1/1 point (graded)
+Lab Preparation
+
+In this lab you will be working with the Tempski et al. data on Brazilian medical students.
+
+1. Open RStudio. Make sure you've installed the SDSFoundations package.
+2. Type library(SDSFoundations). This will automatically load the data for the labs. 
+3.Type res <- TempskiResilience. This will assign the data to your Workspace.
+
+Alternatively, you can use the steps in the "Importing a Data Frame" R tutorial video, and use the TempskiResilience.csv file. (Right-click and "Save As.") Make sure to name the dataframe "res" when importing.
+
+1. Open RStudio.
+2. Click on the "Import Dataset" button at the top of the workspace window. Choose "from text file."
+3. Click on the location of the TempskiResilience.csv file you just downloaded.
+4. Click on the TempskiResilience.csv file. Then, click Upload.
+
+Feel free to use the script from the week's PreLab, which you can modify for use in this Lab.
+
+2. Two of the following questions will be answered in this lab using Linear Regression. Select the questions that can be answered with this method.
+
+
+Of the four measures of Quality of Life (Physical Health, Psychological, Social Relationships, and Environment), which has the greatest impact on Med School Quality of Life?
+What is the overall proportion of varaince explained by the predictors in the model?
+Can program selection group be predicted by Quality of Life and Resilience?
+correct
+
+PRIMARY RESEARCH QUESTIONS
+
+1. For students in the Basic Sciences program, of the four measures of Quality of Life (Physical Health, Psychological, Social Relationships, and Environment), which has the greatest impact on Med School Quality of Life?
+2. What is the overall proportion of variance accounted for by all four scales?
+
+ANALYSIS
+
+Let’s break this question down into the different descriptive statistics that you will need to construct your answer.  Be sure that your R output includes all of the following components. 
+
+To answer both lab questions:
+
+1. Subset the data for students in the Basic Sciences Program.
+2. Determine the variables of interest and the outcome variable.
+3. Run a Multiple Linear Regression.
+4. Find the Standardized Betas for the coefficients using lmBeta().
+5. Use pCorr() to find the partial and part correlations.
+```{r}
+library(SDSFoundations)
+
+res <- TempskiResilience
+```
+
+```{r}
+#Subset into the Clinical Sciences
+basic <- res[res$Group == "Basic Sciences",]
+```
+Question Two
+```{r}
+#Initial correlations
+vars <- c("MS.QoL", "WHOQOL.PH", "WHOQOL.PSY", "WHOQOL.SOC", "WHOQOL.ENV")
+cor(basic[,vars], use="pairwise.complete.obs")
+
+#Test the initial correlations
+library(psych)
+corr.test(basic[,vars], use="pairwise.complete.obs")
+
+#RQ2 Model
+mlr_model <- lm(MS.QoL ~ WHOQOL.PH + WHOQOL.PSY + WHOQOL.SOC + WHOQOL.ENV, data=basic)
+summary(mlr_model)
+confint(mlr_model)
+
+#Diagnostics
+library(car)
+vif(mlr_model)
+plot(mlr_model, which=1)
+cutoff <- 4/(mlr_model$df) 
+plot(mlr_model, which=4, cook.levels=cutoff)
+
+#Put model into context
+lmBeta(mlr_model) 
+round(pCorr(mlr_model), 4) 
+```
+
+problem
+4/4 points (graded)
+Provide the intitial bivariate Pearson Correlation Coefficients for the following variables and the outcome of Med School Quality of Life. Round to 4 decimal places:
+
+1a. Physical Health QoL
+
+0.4606
+correct
+0.4606 
+1b. Psychological QoL
+
+0.5085
+correct
+0.5085 
+1c. Social Relationships QoL
+
+0.3574
+correct
+0.3574 
+1d. Environment QoL
+
+0.4410
+correct
+0.4410 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (4/4 points) Review
+problem
+4/4 points (graded)
+Provide the t-statistic for the predictors in the Multiple Linear Regression for the following variables predicting Med School Quality of Life. Round to 3 decimal places:
+
+2a. Physical Health QoL
+
+2.455
+correct
+2.455 
+2b. Psychological QoL
+
+4.452
+correct
+4.452 
+2c. Social Relationships QoL
+
+1.291
+correct
+1.291 
+2d. Environment QoL
+
+3.927
+correct
+3.927 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (4/4 points) Review
+problem
+2/2 points (graded)
+What are the Overall Model statistics for the prediction of Med School Quality of life?
+
+3a. Overall Model F-value (Round to 2 decimal places.)
+
+50.91
+correct
+50.91 
+3b. Overall Model R-squared (Round to 4 decimal places)
+
+0.3097
+correct
+0.3097 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (2/2 points) Review
+problem
+2/2 points (graded)
+4a. Which of the following coefficeints in the model would be considered the best predictor of Med School Quality of Life?
+Physical Health QoL
+Psychological QoL correct
+Social Relationships QoL
+Environment QoL
+4b. What is the amount of unique proportion of variance accounted for in the prediction of Med School Quality of Life by the best predictor (the correct answer above)?
+0.2%
+0.9%
+2.3%
+3.0% correct
+
+
+PRIMARY RESEARCH QUESTIONS
+
+1. For students in the Basic Sciences program, of the four measures of Quality of Life (Physical Health, Psychological, Social Relationships, and Environment), which has the greatest impact on Med School Quality of Life?
+2. What is the overall proportion of variance accounted for by all four scales?
+
+problem
+7/7 points (graded)
+Write Your Conclusion
+
+Answer the question and support your answer with statistics:
+
+Our primary research question investigated the predictive impact of several Quality of Life items (Physical Health, Psychological, Social Relationships, and Environment) on the outcome of Med School Quality of Life score for Basic Sciences enrolled students. The model showed a correctSignificant overall effect (F(4, 454) =  correct50.91 , p<0.05), The four predictor variables accounted for correct30.97 percent of the variance in the outcome of Med School Quality of Life. The best predictor of Med School Quality of Life was the Psychological QoL scale (t(454) = correct4.452 , p<0.05). As Psychological QoL scale increases one unit, Med School Quality of Life increased by  correct0.0265 (Standardized beta =  correct0.2723 Although significant, and the best predictor in the model, Psychological QoL could only uniquely account for  correct3.0% of the variance in the outcome. .
+
+
+# Problem Set
+
+
+Question 1
+ Bookmark this page
+Answer the following research question using multiple regression on the Timpskey et al. dataset:
+
+For clinical science students, after controlling for Gender and Age, what predictor has a greater impact on BDI score - State or Trait anxiety?
+
+Use the results to answer the following questions.
+```{r}
+#Initial correlations
+names(clin)
+vars <- c("Female", "Age", "BDI", "State.Anxiety", "Trait.anxiety")
+cor(clin[,vars], use="pairwise.complete.obs")
+
+#Test the initial correlations
+library(psych)
+corr.test(clin[,vars], use="pairwise.complete.obs")
+
+#RQ2 Model
+q1_mod <- lm(BDI ~ Female + Age + State.Anxiety + Trait.anxiety, data=clin)
+summary(q1_mod)
+confint(q1_mod)
+
+#Diagnostics
+library(car)
+vif(q1_mod)
+plot(q1_mod, which=1)
+cutoff <- 4/(q1_mod$df) 
+plot(q1_mod, which=4, cook.levels=cutoff)
+
+#Put model into context
+lmBeta(q1_mod) 
+round(pCorr(q1_mod), 4) 
+```
+problem
+0/3 points (graded)
+After running the full model, with all predictors:
+
+1a. What was the overall model fit (R-squared value)? Report as a percentage and round to 2 decimal places.
+
+59.76
+incorrect54.04
+59.76 
+1b. What was the overall model F-statisic? Round to 1 decimal place.
+
+64.7
+incorrect142.8
+64.7 
+1c. How many of the varaibles in the model show a significant effect for the prediction of the BDI score?
+
+6
+incorrect2
+6 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Answers are displayed within the problem Review
+problem
+2/2 points (graded)
+1d. What was the Standardized Beta score for State Anxiety? Round to 3 decimal places.
+
+0.177
+correct
+0.177 
+1e. What was the Standardized Beta score for Trait Anxiety? Round to 3 decimal places.
+
+0.608
+correct
+0.608 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (2/2 points) Review
+problem
+1/2 points (graded)
+1f. What was the proportion of variance that State Anxiety could uniquely account for in the prediction of BDI? Report as a percentage and round to 2 decimal places.
+
+1.70
+correct1.70
+1.70 
+1g. What was the proportion of varaince that Trait Anxiety could uniquely account for in the prediction of BDI? Report as a percentage and round to 2 decimal places.
+
+1.97
+incorrect19.72
+1.97 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Answers are displayed within the problem Review
+problem
+1/1 point (graded)
+1h. After controlling for Age and Gender, what was the best predictor of BDI?
+State Anxiety
+Trait Anxiety correct
+Both
+Neither
+
+
+Question 2
+
+The tables below shows the regression output, with some numbers erased, when a simple regression model relating a response variable Y to a predictor variable X1 is fitted based on 20 observations. Complete the 7 missing numbers.
+![](https://d37djvu3ytnwxt.cloudfront.net/assets/courseware/v1/6605964dcac5aeb864e4eafdc677b80b/asset-v1:UTAustinX+UT.7.21x+2T2017+type@asset+block/Screen_Shot_2016-04-21_at_4.06.09_PM.png)
+problem
+0/1 point (graded)
+2a) A=
+
+19
+incorrect1
+19 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Answers are displayed within the problem Review
+problem
+1/1 point (graded)
+2b. B= (Round to 2 decimal places.)
+
+1848.76
+correct
+1848.76 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+0/1 point (graded)
+2c. C= (Round to 2 decimal places. Please do not use rounded values in your calculation.)
+
+
+507.46
+incorrect480.75
+507.46 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Answers are displayed within the problem Review
+problem
+0/1 point (graded)
+2d. D=
+
+19
+incorrect18
+19 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Answers are displayed within the problem Review
+problem
+1/1 point (graded)
+2e. E= (Round to 2 decimal places.)
+
+26.71
+correct
+26.71 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+0/1 point (graded)
+2f. F= (Round to 2 decimal places.)
+
+-3.70
+incorrect-1.84
+−3.70 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Answers are displayed within the problem Review
+problem
+0/1 point (graded)
+2g. G= (Round to 2 decimal places.)
+
+-3.70
+incorrect1.27
+−3.70 
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Answers are displayed within the problem Review
+problem
+0/1 point (graded)
+2h. H= (Round to 4 decimal places. Use your rounded values from above.)
+
+0
+incorrect0.7936
+0 
+
+
+Question 3
+
+The tables below show the regression output of a multiple regression model relating the beginning salaries in dollars of employees in a given company to the following predictor variables:
+![](https://d37djvu3ytnwxt.cloudfront.net/assets/courseware/v1/864d96e940467d7aa016909c0dccdb14/asset-v1:UTAustinX+UT.7.21x+2T2017+type@asset+block/q3.png)
+Gender             An indicator variable (1=man and 0=woman)
+Education       Years of schooling at the time of hire
+Experience     Number of months of previous work experience
+Months           Number of months with the company
+
+problem
+2/2 points (graded)
+3a. What is the F-statistic for the overall fit of the regression (at a .05 level of significance)?
+
+22.98
+correct
+22.98 
+3b. We should
+
+correct the null hypothesis.
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (2/2 points) Review
+problem
+1/1 point (graded)
+3c. Is there a positive linear relationship between Salary and Experience, after accounting for the effect of the variables of Gender, Education, and Months?
+
+correct
+Submit You have used 1 of 1 attempt Some problems have options such as save, reset, hints, or show answer. These options follow the Submit button.
+
+Show Answer
+Correct (1/1 point) Review
+problem
+2/2 points (graded)
+3d. What salary would you forecast for a man with 12 years of education, 10 months of experience, and 15 months with the company? (Round to the nearest dollar - whole number.)
+
+5692
+correct
+5692 
+3e. What salary would you forecast for a woman with 12 years of education, 10 months of experience, and 15 months with the company? (Round to the nearest dollar - whole number.)
+
+4970
+correct
+4970 
